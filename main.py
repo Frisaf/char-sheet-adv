@@ -1,4 +1,4 @@
-import random
+import random, set_stats
 
 first_names = [
     "Phraan",
@@ -28,7 +28,7 @@ last_names = [
 
 def startup():
     print("Welcome, adventurer! Let's start with making a character sheet.")
-    name = input("What is your character's name? Type 'ran' to get a random name.\n> ")
+    name = input("What is your character's name? Type 'ran' to get a random name.\n> ").lower()
 
     if name == "ran":
         global full_name
@@ -43,7 +43,7 @@ def startup():
         proceed_ans = input(f"Looks good, {full_name}? Type yes or no.\n> ").lower()
 
         if proceed_ans == "yes":
-            set_stats()
+            set_stats.set_scores()
             break
         
         elif proceed_ans == "no":
@@ -52,8 +52,5 @@ def startup():
         
         else:
             print("Please answer yes or no.")
-
-def set_stats():
-    print(f"Let's continue by setting your {full_name}'s stats!")
 
 startup()
