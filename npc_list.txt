@@ -1,0 +1,15 @@
+List to help organise NPC stats
+Each NPC fight requires its own function. Is there any way to fix this?
+1d20 to hit, always
+
+INNKEEPER:
+    - HP: 10
+    - Weapons: Unarmed
+    - Armour Class: 10
+    - Damage: 1d4
+
+MAN IN THE CORNER OF THE INN:
+    - HP: 20
+    - Weapons: Sword
+    - Armour Class: 15
+    - Damage: 1d6

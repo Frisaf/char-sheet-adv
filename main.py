@@ -1,4 +1,63 @@
-import random, time
+import random, time, attack
+
+weapon = False
+
+class Location:
+    def __init__(self, name, description, directions):
+        self.name = name
+        self.description = description
+        self.directions = directions
+
+dir_aliases = {
+    "right": ["r", "right"],
+    "left": ["l", "left"],
+    "forwards": ["f", "forwards"],
+    "backwards": ["b", "backwards"]
+}
+
+def alt_directions(direction):
+    for main_dir, aliases in dir_aliases.items():
+        if direction in aliases:
+            return main_dir
+    return None
+
+locations = {
+    # THE INN
+    "the inn": Location("the inn", "The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but the innkeeper is standing behind the counter to your left and there is a man sitting and eating some food in one corner, right in front of you.", {"left": "innkeeper", "forwards": "man"}),
+    "innkeeper": Location("the innkeeper", "The innkeeper looks at you.", {"backwards": "the inn",}),
+    "man": Location("the man", "The man looks at you.", {"backwards": "the inn",})
+}
+
+class Player:
+    def __init__(self, current_location):
+        self.current_location = current_location
+
+    def move(self, direction):
+        if direction in self.current_location.directions:
+            next_location_name = self.current_location.directions[direction]
+            next_location = locations[next_location_name]
+            self.current_location = next_location
+            print(f"You walk to {next_location.name}")
+        else:
+            print("You cannot go that way...")
+    
+    # def interact(self, item_name):
+        # interact logic
+    
+    def attack(self, npc):
+        if npc == "innkeeper":
+            if self.current_location == "innkeeper":
+                attack.innkeeper()
+            
+            else:
+                print("You cannot do that...")
+        
+        elif npc == "man":
+            if self.current_location == "man":
+                attack.man()
+            
+            else:
+                print("You cannot do that...")
 
 first_names = [
     "Phraan",
@@ -53,7 +112,8 @@ def startup():
             print(f"Your character's name is {full_name}")
         
         else:
-            print(f"Your character's name is {name}")
+            full_name = name.capitalize()
+            print(f"Your character's name is {full_name}")
         
         proceed_ans = input(f"Looks good, {full_name}? Type yes or no.\n> ").lower()
 
@@ -67,6 +127,19 @@ def startup():
             print("Please answer yes or no.")
 
 def set_scores():
+    global strength
+    global strength_mod
+    global dex
+    global dex_mod
+    global con
+    global con_mod
+    global intelligence
+    global intelligence_mod
+    global wis
+    global wis_mod
+    global cha
+    global cha_mod
+
     print(f"Let's roll your ability scores!")
     input("Press ENTER to continue.")
 
@@ -165,13 +238,47 @@ def set_scores():
     print(f"This means that your charisma modifier is {cha_mod}.")
     input("Press ENTER to continue.")
 
-    print(
-        f"Your total ability scores:\nStrength: {strength} +{strength_mod}\nDexterity: {dex} +{dex_mod}\nConstitution: {con} +{con_mod}\nIntelligence: {intelligence} +{intelligence_mod}\nWisdom: {wis} +{wis_mod}\nCharisma: {cha} +{cha_mod}"
-    )
+    global health_points
+    health_points = random.randint(1, 20) + con_mod
 
-    adventure()
+    print(f"Your total ability scores:\nStrength: {strength} +{strength_mod}\nDexterity: {dex} +{dex_mod}\nConstitution: {con} +{con_mod}\nIntelligence: {intelligence} +{intelligence_mod}\nWisdom: {wis} +{wis_mod}\nCharisma: {cha} +{cha_mod}\n\nHealth Points: {health_points}")
 
-def adventure():
+    the_inn()
+
+def the_inn():
+    player = Player(locations["the inn"])
     print(f"We are now ready to start the adventure, {full_name}!")
+    print("Your are currently in the inn")
+
+    while True:
+        print(player.current_location.description)
+        command = input(f"What do you want to do? ").lower()
+
+        if command.startswith("move") or command.startswith("m"):
+            try:
+                direction = command.split()[1]
+                direction = alt_directions(direction)
+                player.move(direction)
+
+            except IndexError:
+                print(f"That is not a valid command. Did you perhaps have a typo?")
+
+        elif command.startswith("interact") or command.startswith("i"):
+            try:
+                item = command.split()[1]
+                player.interact(item)
+            except IndexError:
+                print(f"That is not a valid command. Did you perhaps have a typo?")
+        
+        elif command.startswith("attack") or command.startswith("a"):
+            try:
+                npc = command.split()[1]
+                player.attack(npc)
+            
+            except IndexError:
+                print(f"That is not a valid command. Did you perhaps have a typo?")
+
+        else:
+            print(f"You cannot do that...")
 
 startup()
