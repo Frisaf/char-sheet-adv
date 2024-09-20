@@ -1,4 +1,4 @@
-import random, time, attack
+import random, time, json
 
 weapon = False
 
@@ -45,19 +45,42 @@ class Player:
         # interact logic
     
     def attack(self, npc):
-        if npc == "innkeeper":
-            if self.current_location == "innkeeper":
-                attack.innkeeper()
+        # if npc == "innkeeper":
+        #     if self.current_location == Player(locations["innkeeper"]):
+        #         attack.innkeeper()
+            
+        #     else:
+        #         print("You cannot do that...")
+        
+        # elif npc == "man":
+        #     if self.current_location == Player(locations["man"]):
+        #         attack.man()
+            
+        #     else:
+        #         print("You cannot do that...")
+
+        import attack
+
+        npc_locations = {
+            "innkeeper": "innkeeper",
+            "man": "man"
+        }
+
+        if npc in npc_locations:
+            expected_location = locations[npc_locations[npc]]
+
+            if self.current_location == expected_location:
+                if npc in attack.npc_locations:
+                    attack.npc_locations[npc]()
+                
+                else:
+                    print("You cannot do that...")
             
             else:
                 print("You cannot do that...")
         
-        elif npc == "man":
-            if self.current_location == "man":
-                attack.man()
-            
-            else:
-                print("You cannot do that...")
+        else:
+            print("That is not a valid NPC to attack.")
 
 first_names = [
     "Phraan",
@@ -97,6 +120,10 @@ modifiers = {
     range(18, 19): 4,
 }
 
+weapons = {
+    "shortsword": random.randint(1, 6)
+}
+
 def startup():
     while True:
         print("Welcome, adventurer! Let's start with making a character sheet.")
@@ -112,7 +139,7 @@ def startup():
             print(f"Your character's name is {full_name}")
         
         else:
-            full_name = name.capitalize()
+            full_name = name.title()
             print(f"Your character's name is {full_name}")
         
         proceed_ans = input(f"Looks good, {full_name}? Type yes or no.\n> ").lower()
@@ -127,18 +154,8 @@ def startup():
             print("Please answer yes or no.")
 
 def set_scores():
-    global strength
-    global strength_mod
-    global dex
-    global dex_mod
-    global con
-    global con_mod
-    global intelligence
-    global intelligence_mod
-    global wis
-    global wis_mod
-    global cha
-    global cha_mod
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
 
     print(f"Let's roll your ability scores!")
     input("Press ENTER to continue.")
@@ -147,8 +164,10 @@ def set_scores():
 
     print(f"You rolled: {', '.join(map(str, rolls))}")
 
-    strength = sum(rolls) - min(rolls)
-    strength_mod = next(mod for rng, mod in modifiers.items() if strength in rng)
+    stats["strength"] = sum(rolls) - min(rolls)
+    strength = stats["strength"]
+    stats["strength_mod"] = next(mod for rng, mod in modifiers.items() if strength in rng)
+    strength_mod = stats["strength_mod"]
 
     time.sleep(1)
 
@@ -163,8 +182,10 @@ def set_scores():
 
     print(f"You rolled: {', '.join(map(str, rolls))}")
 
-    dex = sum(rolls) - min(rolls)
-    dex_mod = next(mod for rng, mod in modifiers.items() if dex in rng)
+    stats["dex"] = sum(rolls) - min(rolls)
+    dex = stats["dex"]
+    stats["dex_mod"] = next(mod for rng, mod in modifiers.items() if dex in rng)
+    dex_mod = stats["dex_mod"]
 
     time.sleep(1)
 
@@ -179,8 +200,10 @@ def set_scores():
 
     print(f"You rolled: {', '.join(map(str, rolls))}")
 
-    con = sum(rolls) - min(rolls)
-    con_mod = next(mod for rng, mod in modifiers.items() if con in rng)
+    stats["con"] = sum(rolls) - min(rolls)
+    con = stats["con"]
+    stats["con_mod"] = next(mod for rng, mod in modifiers.items() if con in rng)
+    con_mod = stats["con_mod"]
 
     time.sleep(1)
 
@@ -195,8 +218,10 @@ def set_scores():
 
     print(f"You rolled: {', '.join(map(str, rolls))}")
 
-    intelligence = sum(rolls) - min(rolls)
-    intelligence_mod = next(mod for rng, mod in modifiers.items() if intelligence in rng)
+    stats["intelligence"] = sum(rolls) - min(rolls)
+    intelligence = stats["intelligence"]
+    stats["intelligence_mod"] = next(mod for rng, mod in modifiers.items() if intelligence in rng)
+    intelligence_mod = stats["intelligence_mod"]
 
     time.sleep(1)
     
@@ -211,8 +236,10 @@ def set_scores():
 
     print(f"You rolled: {', '.join(map(str, rolls))}")
 
-    wis = sum(rolls) - min(rolls)
-    wis_mod = next(mod for rng, mod in modifiers.items() if wis in rng)
+    stats["wis"] = sum(rolls) - min(rolls)
+    wis = stats["wis"]
+    stats["wis_mod"] = next(mod for rng, mod in modifiers.items() if wis in rng)
+    wis_mod = stats["wis_mod"]
 
     time.sleep(1)
 
@@ -227,8 +254,10 @@ def set_scores():
 
     print(f"You rolled: {', '.join(map(str, rolls))}")
 
-    cha = sum(rolls) - min(rolls)
-    cha_mod = next(mod for rng, mod in modifiers.items() if cha in rng)
+    stats["cha"] = sum(rolls) - min(rolls)
+    cha = stats["cha"]
+    stats["cha_mod"] = next(mod for rng, mod in modifiers.items() if cha in rng)
+    cha_mod = stats["cha_mod"]
 
     time.sleep(1)
     print(f"Removing {min(rolls)} as it is the lowest roll.")
@@ -239,7 +268,14 @@ def set_scores():
     input("Press ENTER to continue.")
 
     global health_points
-    health_points = random.randint(1, 20) + con_mod
+    global armour_class
+    stats["health_points"] = random.randint(1, 20) + stats["con_mod"]
+    health_points = stats["health_points"]
+    stats["armour_class"] = dex_mod + 10
+    armour_class = stats["armour_class"]
+
+    with open("stats.json", "w") as f:
+        json.dump(stats, f, indent = 4)
 
     print(f"Your total ability scores:\nStrength: {strength} +{strength_mod}\nDexterity: {dex} +{dex_mod}\nConstitution: {con} +{con_mod}\nIntelligence: {intelligence} +{intelligence_mod}\nWisdom: {wis} +{wis_mod}\nCharisma: {cha} +{cha_mod}\n\nHealth Points: {health_points}")
 
@@ -273,7 +309,12 @@ def the_inn():
         elif command.startswith("attack") or command.startswith("a"):
             try:
                 npc = command.split()[1]
-                player.attack(npc)
+
+                if npc == "":
+                    print("You need to specify what you want to attack.")
+                
+                else:
+                    player.attack(npc)
             
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")

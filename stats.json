@@ -1,0 +1,17 @@
+{
+    "weapon": "",
+    "health_points": 17,
+    "armour_class": 11,
+    "strength": 14,
+    "strength_mod": 2,
+    "dex": 13,
+    "dex_mod": 1,
+    "con": 12,
+    "con_mod": 1,
+    "intelligence": 9,
+    "intelligence_mod": -1,
+    "wis": 11,
+    "wis_mod": 0,
+    "cha": 9,
+    "cha_mod": -1
+}
