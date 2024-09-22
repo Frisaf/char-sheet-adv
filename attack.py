@@ -1,4 +1,5 @@
-import random, json
+import random, json, main
+from main import startup, the_inn, the_inn_no_innkeeper
 
 with open("stats.json", "r") as f:
     stats = json.load(f)
@@ -21,44 +22,68 @@ armour_class = stats["armour_class"]
 
 unarmed_strike = random.randint(1, 20) + strength_mod
 
+weapons = {
+    "shortsword": random.randint(1, 6)
+}
+
 if weapon == "":
     weapon = unarmed_strike
-    damage_unarmed = 1 + strength_mod
+    weapon_damage = 1 + strength_mod
 
 else:
-    weapon = weapon
+    weapon_damage = weapons[weapon]
 
 def innkeeper():
     npc_hp = 10
-    damage_roll = damage_unarmed
-    print(npc_hp)
 
     while npc_hp > 0:
         hit_roll = random.randint(1, 20)
 
         if hit_roll >= 10:
             print(f"You rolled {hit_roll} and land a hit on the innkeeper.")
-            npc_hp -= damage_roll
-            print(npc_hp)
+            npc_hp -= weapon_damage
+            print("It is now the innkeeper's turn")
+            input("Press ENTER to continue.")
         
         else:
-            print("You don't hit! It's the innkeeper's turn.")
-            npc_attack = random.randint(1, 20)
+            print(f"You rolled a {hit_roll} and don't hit! It's the innkeeper's turn.")
+            input("Press ENTER to continue.")
 
-            if npc_attack >= armour_class:
-                npc_hit_roll = random.randint(1, 20)
-                stats[health_points] - npc_hit_roll
+        npc_attack = random.randint(1, 6)
 
-                with open("stats.json", "w") as f:
-                    json.dump(stats, f, indent = 4)
+        if npc_attack >= armour_class:
+            npc_hit_roll = random.randint(1, 20)
+            stats["health_points"] -= npc_hit_roll
 
-                print("The innkeeper lands a hit!")
-                print(f"You currently have {health_points}")
+            with open("stats.json", "w") as f:
+                json.dump(stats, f, indent = 4)
 
-def man():
-    print("You attack the man :3")
+            print(f"The innkeeper lands a hit! and deals {npc_hit_roll} damage.")
+            print(f"You currently have {stats['health_points']} HP")
+        
+        else:
+            print("The innkeeper did not hit! It is now your turn.")
+        
+        if stats["health_points"] <= 0:
+            print("You died!")
+            
+            while True:
+                answer = input("Do you want to restart the entire game, or do you want to restart from the latest checkpoint? Type 'RES' to restart the entire game with a new character, or type 'CHECK' to restart from the latest checkpoint.\n> ").upper()
+                if answer == "RES":
+                    startup()
+                
+                elif answer == "CHECK":
+                    the_inn()
+                
+                else:
+                    print("That is not a valid answer.")
+        
+        else:
+            continue
+
+    print("You killed the innkeeper!")
+    the_inn_no_innkeeper()
 
 npc_locations = {
     "innkeeper": innkeeper,
-    "man": man,
 }

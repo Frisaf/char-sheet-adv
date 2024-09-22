@@ -9,7 +9,4 @@ INNKEEPER:
     - Damage: 1d4
 
 MAN IN THE CORNER OF THE INN:
-    - HP: 20
-    - Weapons: Sword
-    - Armour Class: 15
-    - Damage: 1d6
+    Non-attackable
