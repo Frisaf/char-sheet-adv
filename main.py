@@ -1,6 +1,15 @@
 import random, time, json, attack, interact
 
-weapon = False
+YELLOW = "\033[33m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+RESET = "\033[0m"
+CYAN = "\033[36m"
+BOLD = "\033[1m"
+ITALIC = "\033[3m"
+PURPLE = "\033[35m"
+INDENT = " "*20
+BLUE = "\033[34m"
 
 class Location:
     def __init__(self, name, description, directions):
@@ -30,7 +39,7 @@ locations = {
     "man without innkeeper": Location("the man", "The man looks at you.", {"backwards": "the inn without innkeeper"}),
     # QUEST
     "outside": Location("Berthold", "You follow Berthold outside. He explains that the evil wizard Magico plans to make the entire world's population to his slaves, and with that take over the world.\n'I need a brave adventurer like you to stop Magico's evil plans', Berthold says, 'you can kill him, or if you are able to take him here and let him serve his lifetime in jail. The choice is entirely up to you. Now, you might wonder where Magico lives, and the truth is that no one knows exactly where. There was a traveller who disappeared on a trip to the Great Canyon, which is to the west. I suggest you go there.'\n\nSAVEPOINT: You cannot go back to the inn", {"left": "canyon"}),
-    "canyon": Location("the west, to the canyon", "You arrive Great Canyon, the place where Berthold said Magico probably lived.", {})
+    "canyon": Location("the west, to the canyon", "You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the canyon, searching for any signs of a hidden base somewhere.", {})
 }
 
 class Player:
