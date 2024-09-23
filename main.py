@@ -10,6 +10,7 @@ ITALIC = "\033[3m"
 PURPLE = "\033[35m"
 INDENT = " "*20
 BLUE = "\033[34m"
+PURPLE = "\033[35m"
 
 class Location:
     def __init__(self, name, description, directions):
@@ -32,14 +33,14 @@ def alt_directions(direction):
 
 locations = {
     # THE INN
-    "the inn": Location("the inn", "The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but the innkeeper is standing behind the counter to your left and there is a man sitting and eating some food in one corner, right in front of you.", {"left": "innkeeper", "forwards": "man"}),
-    "the inn without innkeeper": Location("the inn", "The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but there is a man sitting and eating some food in one corner, right in front of you. The innkeeper lies dead behind the counter.", {"forwards": "man without innkeeper"}),
-    "innkeeper": Location("the innkeeper", "The innkeeper looks at you.", {"backwards": "the inn",}),
-    "man": Location("the man", "The man looks at you.", {"backwards": "the inn",}),
-    "man without innkeeper": Location("the man", "The man looks at you.", {"backwards": "the inn without innkeeper"}),
+    "the inn": Location("the inn", f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but the innkeeper is standing behind the counter to your left and there is a man sitting and eating some food in one corner, right in front of you.{RESET}", {"left": "innkeeper", "forwards": "man"}),
+    "the inn without innkeeper": Location("the inn", f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but there is a man sitting and eating some food in one corner, right in front of you. The innkeeper lies dead behind the counter.{RESET}", {"forwards": "man without innkeeper"}),
+    "innkeeper": Location("the innkeeper", f"{YELLOW}The innkeeper looks at you.{RESET}", {"backwards": "the inn",}),
+    "man": Location("the man", f"{YELLOW}The man looks at you.{RESET}", {"backwards": "the inn",}),
+    "man without innkeeper": Location("the man", f"{YELLOW}The man looks at you.{RESET}", {"backwards": "the inn without innkeeper"}),
     # QUEST
-    "outside": Location("Berthold", "You follow Berthold outside. He explains that the evil wizard Magico plans to make the entire world's population to his slaves, and with that take over the world.\n'I need a brave adventurer like you to stop Magico's evil plans', Berthold says, 'you can kill him, or if you are able to take him here and let him serve his lifetime in jail. The choice is entirely up to you. Now, you might wonder where Magico lives, and the truth is that no one knows exactly where. There was a traveller who disappeared on a trip to the Great Canyon, which is to the west. I suggest you go there.'\n\nSAVEPOINT: You cannot go back to the inn", {"left": "canyon"}),
-    "canyon": Location("the west, to the canyon", "You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the canyon, searching for any signs of a hidden base somewhere.", {})
+    "outside": Location("Berthold", f"{YELLOW}You follow Berthold outside. He explains that the evil wizard Magico plans to make the entire world's population to his slaves, and with that take over the world.\n{PURPLE}'I need a brave adventurer like you to stop Magico's evil plans'{YELLOW}, Berthold says,{PURPLE} 'you can kill him, or if you are able to take him here and let him serve his lifetime in jail. The choice is entirely up to you. Now, you might wonder where Magico lives, and the truth is that no one knows exactly where. There was a traveller who disappeared on a trip to the Great Canyon, which is to the west. I suggest you go there.'\n\n{RED}SAVEPOINT:{GREEN} You cannot go back to the inn{RESET}", {"left": "canyon"}),
+    "canyon": Location("the west, to the canyon", f"{YELLOW}You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the canyon, searching for any signs of a hidden base somewhere.{RESET}", {})
 }
 
 class Player:
@@ -51,7 +52,7 @@ class Player:
             next_location_name = self.current_location.directions[direction]
             next_location = locations[next_location_name]
             self.current_location = next_location
-            print(f"You walk to {next_location.name}")
+            print(f"{YELLOW}You walk to {BOLD}{BLUE}{next_location.name}{RESET}")
         else:
             print("You cannot go that way...")
     
