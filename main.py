@@ -10,7 +10,7 @@ ITALIC = "\033[3m"
 PURPLE = "\033[35m"
 INDENT = " "*20
 BLUE = "\033[34m"
-PURPLE = "\033[35m"
+WHITEB = "\033[47m"
 
 class Location:
     def __init__(self, name, description, directions):
@@ -60,6 +60,7 @@ class Player:
         item_locations = {
             "innkeeper": "innkeeper",
             "man": "man",
+            "man": "man without innkeeper"
         }
 
         if item_name in item_locations:
@@ -139,8 +140,8 @@ def startup():
         stats = json.load(f)
 
     while True:
-        print("Welcome, adventurer! Let's start with making a character sheet.")
-        name = input("What is your character's name? Type 'random' or 'ran' and press ENTER to get a random name.\n> ").lower()
+        print(f"{BOLD}{BLUE}{WHITEB}Welcome, adventurer! Let's start with making a character sheet.{RESET}")
+        name = input(f"{BLUE}{WHITEB}What is your character's name? Type 'random' or 'ran' and press ENTER to get a random name.\n>{RESET} ").lower()
 
         if name == "ran" or name == "random":
             global full_name
@@ -150,15 +151,15 @@ def startup():
             stats["full_name"] = f"{first_name} {last_name}"
             full_name = stats["full_name"]
 
-            print(f"Your character's name is {full_name}")
+            print(f"{RED}Your character's name is{BLUE} {full_name}{RESET}")
         
         else:
             stats["full_name"] = name.title()
             full_name = stats["full_name"]
 
-            print(f"Your character's name is {full_name}")
+            print(f"{RED}Your character's name is{BLUE} {full_name}{RESET}")
         
-        proceed_ans = input(f"Looks good, {full_name}? Type yes or no.\n> ").lower()
+        proceed_ans = input(f"{BLUE}{WHITEB}Looks good, {full_name}? Type yes or no.\n>{RESET} ").lower()
 
         if proceed_ans == "yes":
             with open("stats.json", "w") as f:
@@ -170,7 +171,7 @@ def startup():
         elif proceed_ans == "no":
             continue
         else:
-            print("Please answer yes or no.")
+            print(f"{BLUE}{WHITEB}Please answer yes or no.{RESET}")
 
 def set_scores():
     with open("stats.json", "r") as f:

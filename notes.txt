@@ -1,4 +1,4 @@
 descriptions: yellow
 dialogues: purple
 "system messages": red, descriptors green
-location names: bold, blue
+location names: bold, blue, white background

@@ -55,4 +55,5 @@ def man():
 item_locations = {
     "innkeeper": innkeeper,
     "man": man,
+    "man without innkeeper": man,
 }

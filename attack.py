@@ -42,6 +42,7 @@ def innkeeper():
         if hit_roll >= 10:
             print(f"You rolled {hit_roll} and land a hit on the innkeeper.")
             npc_hp -= weapon_damage
+            print(f"You deal {weapon_damage} damage")
             print("It is now the innkeeper's turn")
             input("Press ENTER to continue.")
         
