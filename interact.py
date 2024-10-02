@@ -11,43 +11,72 @@ PURPLE = "\033[35m"
 INDENT = " "*20
 BLUE = "\033[34m"
 
-with open("stats.json", "r") as f:
-    stats = json.load(f)
-
 def innkeeper():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
     print(f"Hello there, {stats['full_name']}! I've heard a lot about you. They say you have done heroic things. Why don't you speak with Berthold, the man over there?\n{ITALIC}She points to the man in the corner{RESET}\nI think he really wants to speak with you.")
+    print(f"[1] What do you sell?\n[2] How is business?\n[3] {ITALIC}Leave{RESET}")
 
-def man():
-    print(f"Greetings, {stats['full_name']}. My name is Berthold. I've heard a lot about you. In fact, I am in dire need of your services.")
-
-    answer = input("Do you think you can help? (Type yes or no)\n> ").lower()
+    dialogue_answer = int(input("> "))
 
     while True:
-        if answer == "yes":
+        if dialogue_answer == 1:
+            print("I sell lots of different things. Take a look.")
+            break
+            
+        
+        elif dialogue_answer == 2:
+            print("Well, people come in, they get drunk and they leave. That's how it goes every night. One get pretty tired of it eventually, but a poor widow has to earn her keep somehow.")
             break
         
-        elif answer == "no":
-            print("Really? That's a shame... What if I told you that the entire world might cease to exist would we not complete this mission?")
-            print("Rolling insight (wisdom).\nYou need a 25 to succeed.")
-            input("Press ENTER to continue.")
+        elif dialogue_answer == 3:
+            print("Goodbye! See you later.")
+            break 
 
-            insight_roll = random.randint(1, 20) + stats["wis_mod"]
+def man():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
 
-            print(f"You rolled {insight_roll} +{stats['wis_mod']}")
-            input("Press ENTER to continue")
+    print(f"Greetings, {stats['full_name']}. My name is Berthold. I've heard a lot about you. In fact, I am in dire need of your services. Do you think you can help?")
+    print("[1] Yes, I'd love to. What do you need help with?\n[2] No, I don't want to help you.\n[3] Wait a moment")
 
-            if insight_roll == 20 or insight_roll >=25:
-                print("You listen carefully to the man's words, but the man speaks truth. The world is in danger and it needs your help.")
-                print("You agree to the quest.")
+    answer = int(input("> "))
+
+    while True:
+        try:
+            if answer == 1:
                 break
+            
+            elif answer == 2:
+                print("Really? That's a shame... What if I told you that the entire world might cease to exist would we not complete this mission?")
+                print("Rolling insight (wisdom).\nYou need a 25 to succeed.")
+                input("Press ENTER to continue.")
 
-            elif insight_roll < 25:
-                print("You don't sense any lie behind Berthold's words. The world is indeed in danger, and it needs your help.")
-                print("You agree to the quest.")
+                insight_roll = random.randint(1, 20) + stats["wis_mod"]
+
+                print(f"You rolled {insight_roll} +{stats['wis_mod']}")
+                input("Press ENTER to continue")
+
+                if insight_roll == 20 or insight_roll >=25:
+                    print("You listen carefully to the man's words, but the man speaks truth. The world is in danger and it needs your help.")
+                    print("You agree to the quest.")
+                    break
+
+                elif insight_roll < 25:
+                    print("You don't sense any lie behind Berthold's words. The world is indeed in danger, and it needs your help.")
+                    print("You agree to the quest.")
+                    break
+            
+            elif answer == 3:
+                main.the_inn()
                 break
+            
+            else:
+                print("Please provide a valid answer")
         
-        else:
-            print("You need to answer yes or no.")
+        except ValueError:
+            print("Please provide a valid answer")
     
     print("Awesome, follow me.")
     main.quest()

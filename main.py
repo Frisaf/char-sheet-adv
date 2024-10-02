@@ -1,5 +1,16 @@
 import random, time, json, attack, interact
 
+print("Welcome!")
+input("Press ENTER to continue")
+
+with open("npc_stats.json", "r") as f:
+    npc_stats = json.load(f)
+
+npc_stats["innkeeper alive"] = True
+
+with open("npc_stats.json", "w") as f:
+    json.dump(npc_stats, f, indent = 4)
+
 YELLOW = "\033[33m"
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -33,11 +44,9 @@ def alt_directions(direction):
 
 locations = {
     # THE INN
-    "the inn": Location("the inn", f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but the innkeeper is standing behind the counter to your left and there is a man sitting and eating some food in one corner, right in front of you.{RESET}", {"left": "innkeeper", "forwards": "man"}),
-    "the inn without innkeeper": Location("the inn", f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day, but there is a man sitting and eating some food in one corner, right in front of you. The innkeeper lies dead behind the counter.{RESET}", {"forwards": "man without innkeeper"}),
+    "the inn": Location("the inn", f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day.{RESET}", {"left": "innkeeper", "forwards": "man"}),
     "innkeeper": Location("the innkeeper", f"{YELLOW}The innkeeper looks at you.{RESET}", {"backwards": "the inn",}),
     "man": Location("the man", f"{YELLOW}The man looks at you.{RESET}", {"backwards": "the inn",}),
-    "man without innkeeper": Location("the man", f"{YELLOW}The man looks at you.{RESET}", {"backwards": "the inn without innkeeper"}),
     # QUEST
     "outside": Location("Berthold", f"{YELLOW}You follow Berthold outside. He explains that the evil wizard Magico plans to make the entire world's population to his slaves, and with that take over the world.\n{PURPLE}'I need a brave adventurer like you to stop Magico's evil plans'{YELLOW}, Berthold says,{PURPLE} 'you can kill him, or if you are able to take him here and let him serve his lifetime in jail. The choice is entirely up to you. Now, you might wonder where Magico lives, and the truth is that no one knows exactly where. There was a traveller who disappeared on a trip to the Great Canyon, which is to the west. I suggest you go there.'\n\n{RED}SAVEPOINT:{GREEN} You cannot go back to the inn{RESET}", {"left": "canyon"}),
     "canyon": Location("the west, to the canyon", f"{YELLOW}You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the canyon, searching for any signs of a hidden base somewhere.{RESET}", {})
@@ -59,8 +68,7 @@ class Player:
     def interact(self, item_name):
         item_locations = {
             "innkeeper": "innkeeper",
-            "man": "man",
-            "man": "man without innkeeper"
+            "man": "man"
         }
 
         if item_name in item_locations:
@@ -140,8 +148,8 @@ def startup():
         stats = json.load(f)
 
     while True:
-        print(f"{BOLD}{BLUE}{WHITEB}Welcome, adventurer! Let's start with making a character sheet.{RESET}")
-        name = input(f"{BLUE}{WHITEB}What is your character's name? Type 'random' or 'ran' and press ENTER to get a random name.\n>{RESET} ").lower()
+        print(f"{BOLD}{BLUE}Welcome, adventurer! Let's start with making a character sheet.{RESET}")
+        name = input(f"{BLUE}What is your character's name? Type 'random' or 'ran' and press ENTER to get a random name.\n>{RESET} ").lower()
 
         if name == "ran" or name == "random":
             global full_name
@@ -159,7 +167,7 @@ def startup():
 
             print(f"{RED}Your character's name is{BLUE} {full_name}{RESET}")
         
-        proceed_ans = input(f"{BLUE}{WHITEB}Looks good, {full_name}? Type yes or no.\n>{RESET} ").lower()
+        proceed_ans = input(f"{BLUE}Looks good, {full_name}? Type yes or no.\n>{RESET} ").lower()
 
         if proceed_ans == "yes":
             with open("stats.json", "w") as f:
@@ -171,7 +179,7 @@ def startup():
         elif proceed_ans == "no":
             continue
         else:
-            print(f"{BLUE}{WHITEB}Please answer yes or no.{RESET}")
+            print(f"{BLUE}Please answer yes or no.{RESET}")
 
 def set_scores():
     with open("stats.json", "r") as f:
@@ -308,46 +316,16 @@ def the_inn():
 
     while True:
         print(player.current_location.description)
-        command = input(f"What do you want to do? ").lower()
 
-        if command.startswith("move") or command.startswith("m"):
-            try:
-                direction = command.split()[1]
-                direction = alt_directions(direction)
-                player.move(direction)
-
-            except IndexError:
-                print(f"That is not a valid command. Did you perhaps have a typo?")
-
-        elif command.startswith("interact") or command.startswith("i"):
-            try:
-                item = command.split()[1]
-                player.interact(item)
-            except IndexError:
-                print(f"That is not a valid command. Did you perhaps have a typo?")
+        with open("npc_stats.json", "r") as f:
+            npc_stats = json.load(f)
         
-        elif command.startswith("attack") or command.startswith("a"):
-            try:
-                npc = command.split()[1]
+        if npc_stats["innkeeper alive"] == True and player.current_location.description == f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day.{RESET}":
+            print("The innkeeper is standing behind the counter to your left and there is a man sitting and eating some food in one corner, right in front of you.")
+        
+        elif npc_stats["innkeeper alive"] == False and player.current_location.description == f"{YELLOW}The inn smells of ale and food. The inn is fairly empty, which is understandable considering the time of the day.{RESET}":
+            print("The innkeeper lies dead behind the counter, and your entire body is soaked in her blood. Right in front of you, there is a man sitting and eating some food in the corner of the inn.")
 
-                if npc == "":
-                    print("You need to specify what you want to attack.")
-                
-                else:
-                    player.attack(npc)
-            
-            except IndexError:
-                print(f"That is not a valid command. Did you perhaps have a typo?")
-
-        else:
-            print(f"You cannot do that...")
-
-def the_inn_no_innkeeper():
-    player = Player(locations["the inn without innkeeper"])
-    print("Your are currently in the inn")
-
-    while True:
-        print(player.current_location.description)
         command = input(f"What do you want to do? ").lower()
 
         if command.startswith("move") or command.startswith("m"):

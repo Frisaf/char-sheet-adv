@@ -1,8 +1,11 @@
-import random, json, main
-from main import startup, the_inn, the_inn_no_innkeeper
+import random, json
+from main import startup, the_inn
 
 with open("stats.json", "r") as f:
     stats = json.load(f)
+
+with open("npc_stats.json", "r") as f:
+    npc_stats = json.load(f)
 
 weapon = stats["weapon"]
 strength = stats["strength"]
@@ -50,16 +53,16 @@ def innkeeper():
             print(f"You rolled a {hit_roll} and don't hit! It's the innkeeper's turn.")
             input("Press ENTER to continue.")
 
-        npc_attack = random.randint(1, 6)
+        npc_hit = random.randint(1, 20)
 
-        if npc_attack >= armour_class:
-            npc_hit_roll = random.randint(1, 20)
-            stats["health_points"] -= npc_hit_roll
+        if npc_hit >= armour_class:
+            npc_attack_roll = random.randint(1, 6)
+            stats["health_points"] -= npc_attack_roll
 
             with open("stats.json", "w") as f:
                 json.dump(stats, f, indent = 4)
 
-            print(f"The innkeeper lands a hit! and deals {npc_hit_roll} damage.")
+            print(f"The innkeeper lands a hit! and deals {npc_attack_roll} damage.")
             print(f"You currently have {stats['health_points']} HP")
         
         else:
@@ -83,7 +86,13 @@ def innkeeper():
             continue
 
     print("You killed the innkeeper!")
-    the_inn_no_innkeeper()
+
+    npc_stats["innkeeper alive"] = False
+
+    with open("npc_stats.json", "w") as f:
+        json.dump(npc_stats, f, indent = 4)
+
+    the_inn()
 
 npc_locations = {
     "innkeeper": innkeeper,
