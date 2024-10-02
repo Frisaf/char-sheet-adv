@@ -98,7 +98,7 @@ def innkeeper_shop():
         "grilled pork"
     ]
 
-    print(f"{GREEN}GOLD:{RESET} {stats["gold"]}\n ")
+    print(f"{GREEN}GOLD:{RESET} {stats['gold']}\n ")
     print(f"{RED}[1] ALE:{RESET} 5 GP - Heals 1d4 HP\n{RED}[2] GRILLED PORK:{RESET} 10 GP - Heals 1d8 HP")
     
     answer = int(input("> "))
