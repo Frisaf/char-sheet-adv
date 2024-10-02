@@ -1,8 +1,5 @@
 import random, time, json, attack, interact
 
-print("Welcome!")
-input("Press ENTER to continue")
-
 with open("npc_stats.json", "r") as f:
     npc_stats = json.load(f)
 
@@ -301,11 +298,13 @@ def set_scores():
     health_points = stats["health_points"]
     stats["armour_class"] = dex_mod + 10
     armour_class = stats["armour_class"]
+    stats["gold"] = random.randint(1, 4) * 10
+    gold = stats["gold"]
 
     with open("stats.json", "w") as f:
         json.dump(stats, f, indent = 4)
 
-    print(f"Your total ability scores:\nStrength: {strength} +{strength_mod}\nDexterity: {dex} +{dex_mod}\nConstitution: {con} +{con_mod}\nIntelligence: {intelligence} +{intelligence_mod}\nWisdom: {wis} +{wis_mod}\nCharisma: {cha} +{cha_mod}\n\nHealth Points: {health_points}\nArmour Class: {armour_class}")
+    print(f"Your total ability scores:\nStrength: {strength} +{strength_mod}\nDexterity: {dex} +{dex_mod}\nConstitution: {con} +{con_mod}\nIntelligence: {intelligence} +{intelligence_mod}\nWisdom: {wis} +{wis_mod}\nCharisma: {cha} +{cha_mod}\n\nHealth Points: {health_points}\nArmour Class: {armour_class}\nGold: {gold}")
     print(f"We are now ready to start the adventure, {full_name}!")
 
     the_inn()

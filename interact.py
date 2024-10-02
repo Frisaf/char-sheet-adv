@@ -21,18 +21,26 @@ def innkeeper():
     dialogue_answer = int(input("> "))
 
     while True:
-        if dialogue_answer == 1:
-            print("I sell lots of different things. Take a look.")
-            break
+        try:
+            if dialogue_answer == 1:
+                print("I sell lots of different things. Take a look.")
+                innkeeper_shop()
+                break
+                
             
+            elif dialogue_answer == 2:
+                print("Well, people come in, they get drunk and they leave. That's how it goes every night. One get pretty tired of it eventually, but a poor widow has to earn her keep somehow.")
+                break
+            
+            elif dialogue_answer == 3:
+                print("Goodbye! See you later.")
+                break 
+            
+            else:
+                print("Please provide a valid answer")
         
-        elif dialogue_answer == 2:
-            print("Well, people come in, they get drunk and they leave. That's how it goes every night. One get pretty tired of it eventually, but a poor widow has to earn her keep somehow.")
-            break
-        
-        elif dialogue_answer == 3:
-            print("Goodbye! See you later.")
-            break 
+        except ValueError:
+            print("Please provide a valid answer")
 
 def man():
     with open("stats.json", "r") as f:
@@ -80,6 +88,26 @@ def man():
     
     print("Awesome, follow me.")
     main.quest()
+
+def innkeeper_shop():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+    
+    innkeeper_items = [
+        "ale",
+        "grilled pork"
+    ]
+
+    print(f"{GREEN}GOLD:{RESET} {stats["gold"]}\n ")
+    print(f"{RED}[1] ALE:{RESET} 5 GP - Heals 1d4 HP\n{RED}[2] GRILLED PORK:{RESET} 10 GP - Heals 1d8 HP")
+    
+    answer = int(input("> "))
+
+    if answer == 1:
+        innkeeper_items.pop(0)
+    
+    elif answer == 2:
+        innkeeper_items.pop(1)
 
 item_locations = {
     "innkeeper": innkeeper,
