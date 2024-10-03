@@ -37,6 +37,12 @@ else:
     weapon_damage = weapons[weapon]
 
 def innkeeper():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
+    with open("npc_stats.json", "r") as f:
+        npc_stats = json.load(f)
+        
     npc_hp = 10
 
     while npc_hp > 0:

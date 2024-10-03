@@ -61,17 +61,19 @@ def man():
                 print("Rolling insight (wisdom).\nYou need a 25 to succeed.")
                 input("Press ENTER to continue.")
 
-                insight_roll = random.randint(1, 20) + stats["wis_mod"]
+                insight_roll = random.randint(1, 20)
+                modifier = stats["wis_mod"]
+                result = insight_roll + modifier
 
-                print(f"You rolled {insight_roll} +{stats['wis_mod']}")
+                print(f"You rolled {insight_roll} + {modifier}")
                 input("Press ENTER to continue")
 
-                if insight_roll == 20 or insight_roll >=25:
+                if result == 20 or result >=25:
                     print("You listen carefully to the man's words, but the man speaks truth. The world is in danger and it needs your help.")
                     print("You agree to the quest.")
                     break
 
-                elif insight_roll < 25:
+                elif result < 25:
                     print("You don't sense any lie behind Berthold's words. The world is indeed in danger, and it needs your help.")
                     print("You agree to the quest.")
                     break
@@ -92,25 +94,45 @@ def man():
 def innkeeper_shop():
     with open("stats.json", "r") as f:
         stats = json.load(f)
-    
-    innkeeper_items = [
-        "ale",
-        "grilled pork"
-    ]
 
     print(f"{GREEN}GOLD:{RESET} {stats['gold']}\n ")
-    print(f"{RED}[1] ALE:{RESET} 5 GP - Heals 1d4 HP\n{RED}[2] GRILLED PORK:{RESET} 10 GP - Heals 1d8 HP")
     
-    answer = int(input("> "))
+    for index, item in enumerate(innkeeper_items):
+        print(f"[{index + 1}] {item} {innkeeper_items[item]} GP")
+    
+    while True:
+        answer = int(input("> "))
 
-    if answer == 1:
-        innkeeper_items.pop(0)
+        if answer == 1:
+            if stats["gold"] < 5:
+                print("You don't have enough gold to buy this item.")
+                break
+            
+            else:
+                innkeeper_items.remove("ale")
+                stats["gold"] -= 5
+                break
+        
+        elif answer == 2:
+            if stats["gold"] < 10:
+                print("You don't have enough gold ot buy this item.")
+                break
+            
+            else:
+                innkeeper_items.remove("grilled pork")
+                stats["gold"] -= 10
+                break
     
-    elif answer == 2:
-        innkeeper_items.pop(1)
+    with open("stats.json", "w") as f:
+        json.dump(stats, f, indent = 4)
 
 item_locations = {
     "innkeeper": innkeeper,
     "man": man,
     "man without innkeeper": man,
+}
+
+innkeeper_items = {
+    "Ale": 5,
+    "Grilled pork": 10,
 }

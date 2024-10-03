@@ -29,8 +29,8 @@ class Location:
 dir_aliases = {
     "right": ["r", "right", "east", "e"],
     "left": ["l", "left", "west", "w"],
-    "forwards": ["f", "forwards", "north", "n"],
-    "backwards": ["b", "backwards", "south", "s"]
+    "forwards": ["f", "forwards", "north", "n", "forward"],
+    "backwards": ["b", "backwards", "south", "s", "backward"]
 }
 
 def alt_directions(direction):
@@ -143,6 +143,9 @@ modifiers = {
 def startup():
     with open("stats.json", "r") as f:
         stats = json.load(f)
+    
+    print(f"{RED}SYSTEM: {GREEN}Welcome to Escape 2: The Rescue, adventurer! Here are some useful tips that will help you progress the story.\n\nThere are six different commands, four for movement and two for interacting with your environment:\n- {YELLOW}move{GREEN} forwards/left/right/backwards.\n- {YELLOW}interact {GREEN}[item]\n- {YELLOW}attack{GREEN} [NPC]\nThere are aliases for these as well: {YELLOW}forward{GREEN} = f, north, n, forward {RED}| {YELLOW}left{GREEN} = l, west, w {RED}| {YELLOW}right{GREEN} = r, east, e {RED}| {YELLOW}backwards{GREEN} = b, south, s, backward {RED}| {YELLOW}interact {GREEN}= i {RED}| {YELLOW}attack {GREEN}= a\n\nItems that you can interact with are written in {CYAN}cyan{GREEN}. You can attempt to attack all NPC:s, but the gods will not always allow it...\n\nWith that out of the way, let's play the game!{RESET}")
+    input("Press ENTER to continue")
 
     while True:
         print(f"{BOLD}{BLUE}Welcome, adventurer! Let's start with making a character sheet.{RESET}")
