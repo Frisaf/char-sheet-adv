@@ -94,37 +94,54 @@ def man():
 def innkeeper_shop():
     with open("stats.json", "r") as f:
         stats = json.load(f)
+    
+    with open("inventory.json", "r") as f:
+        inventory = json.load(f)
 
     print(f"{GREEN}GOLD:{RESET} {stats['gold']}\n ")
     
     for index, item in enumerate(innkeeper_items):
         print(f"[{index + 1}] {item} {innkeeper_items[item]} GP")
     
+    print("Type 'q' to exit buy mode.")
+    
+    innkeeper_items_list = list(innkeeper_items.keys())
+    
     while True:
-        answer = int(input("> "))
+        answer = input("> ").lower()
 
-        if answer == 1:
-            if stats["gold"] < 5:
-                print("You don't have enough gold to buy this item.")
+        if answer == "q":
+            break
+
+        elif 1 <= int(answer) <= len(innkeeper_items_list):
+            bought_item = innkeeper_items_list[int(answer) - 1]
+            price = innkeeper_items[bought_item]
+
+            if stats["gold"] >= price:
+                stats["gold"] -= price
+
+                del innkeeper_items[bought_item]
+                innkeeper_items_list.remove(bought_item)
+
+                for characteristic in item_characteristics:
+                    inventory[bought_item] = [item_characteristics[characteristic]]
+
+                print(f"You bought {bought_item.lower()} for {price} GP")
+
+                with open("stats.json", "w") as f:
+                    json.dump(stats, f, indent = 4)
+                
+                with open("inventory.json", "w") as f:
+                    json.dump(inventory, f, indent = 4)
+                
                 break
             
             else:
-                innkeeper_items.remove("ale")
-                stats["gold"] -= 5
-                break
-        
-        elif answer == 2:
-            if stats["gold"] < 10:
-                print("You don't have enough gold ot buy this item.")
-                break
-            
-            else:
-                innkeeper_items.remove("grilled pork")
-                stats["gold"] -= 10
+                print("You don't have enough gold to buy that.")
                 break
     
-    with open("stats.json", "w") as f:
-        json.dump(stats, f, indent = 4)
+        else:
+            print("Please enter a valid answer")
 
 item_locations = {
     "innkeeper": innkeeper,
@@ -135,4 +152,9 @@ item_locations = {
 innkeeper_items = {
     "Ale": 5,
     "Grilled pork": 10,
+}
+
+item_characteristics = {
+    "Ale": random.randint(1, 4),
+    "Grilled pork": random.randint(1, 8),
 }

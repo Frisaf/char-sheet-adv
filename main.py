@@ -8,6 +8,14 @@ npc_stats["innkeeper alive"] = True
 with open("npc_stats.json", "w") as f:
     json.dump(npc_stats, f, indent = 4)
 
+with open("inventory.json", "r") as f:
+    inventory = json.load(f)
+
+inventory = {}
+
+with open("inventory.json", "w") as f:
+    json.dump(inventory, f, indent = 4)
+
 YELLOW = "\033[33m"
 RED = "\033[31m"
 GREEN = "\033[32m"
@@ -101,6 +109,9 @@ class Player:
         
         else:
             print("That is not a valid NPC to attack.")
+    
+    def inventory(self):
+        print("Here is your inventory\n") # Is this needed?
 
 first_names = [
     "Phraan",
@@ -297,7 +308,7 @@ def set_scores():
 
     global health_points
     global armour_class
-    stats["health_points"] = random.randint(1, 20) + stats["con_mod"]
+    stats["health_points"] = random.randint(10, 20) + stats["con_mod"]
     health_points = stats["health_points"]
     stats["armour_class"] = dex_mod + 10
     armour_class = stats["armour_class"]
@@ -358,6 +369,12 @@ def the_inn():
             
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
+        
+        elif command.startswith("bag"):
+            with open("inventory.json", "r") as f:
+                inventory = json.load(f)
+        
+            print(inventory)
 
         else:
             print(f"You cannot do that...")
