@@ -54,7 +54,7 @@ locations = {
     "man": Location("the man", f"{YELLOW}The man looks at you.{RESET}", {"backwards": "the inn",}),
     # QUEST
     "outside": Location("Berthold", f"{YELLOW}You follow Berthold outside. He explains that the evil wizard Magico plans to make the entire world's population to his slaves, and with that take over the world.\n{PURPLE}'I need a brave adventurer like you to stop Magico's evil plans'{YELLOW}, Berthold says,{PURPLE} 'you can kill him, or if you are able to take him here and let him serve his lifetime in jail. The choice is entirely up to you. Now, you might wonder where Magico lives, and the truth is that no one knows exactly where. There was a traveller who disappeared on a trip to the Great Canyon, which is to the west. I suggest you go there.'\n\n{RED}SAVEPOINT:{GREEN} You cannot go back to the inn{RESET}", {"left": "canyon"}),
-    "canyon": Location("the west, to the canyon", f"{YELLOW}You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the canyon, searching for any signs of a hidden base somewhere.{RESET}", {})
+    "canyon": Location("the west, to the canyon", f"{YELLOW}You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the {CYAN}canyon{YELLOW}, searching for any signs of a hidden base somewhere.{RESET}", {})
 }
 
 class Player:
@@ -73,7 +73,8 @@ class Player:
     def interact(self, item_name):
         item_locations = {
             "innkeeper": "innkeeper",
-            "man": "man"
+            "man": "man",
+            "canyon": "canyon"
         }
 
         if item_name in item_locations:
@@ -373,8 +374,46 @@ def the_inn():
         elif command.startswith("bag"):
             with open("inventory.json", "r") as f:
                 inventory = json.load(f)
+            
+            with open("stats.json", "r") as f:
+                stats = json.load(f)
+
+            print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
         
-            print(inventory)
+            for index, item in enumerate(inventory):
+                print(f"[{index + 1}] {item}")
+
+            print("Type 'q' to exit inventory")
+
+            inventory_list = list(inventory.keys())
+
+            while True:
+                answer = input("> ").lower()
+
+                if answer == "q":
+                    break
+
+                elif 1 <= int(answer) <= len(inventory_list):
+                    used_item = inventory_list[int(answer) - 1]
+                    healing_value = inventory[used_item][0]
+
+                    stats["health_points"] += healing_value
+
+                    print(f"You used {used_item} and regained {healing_value} health points")
+
+                    del inventory[used_item]
+                    inventory_list.remove(used_item)
+
+                    with open("stats.json", "w") as f:
+                        json.dump(stats, f, indent = 4)
+                    
+                    with open("inventory.json", "w") as f:
+                        json.dump(inventory, f, indent = 4)
+                    
+                    break
+
+                else:
+                    print("Please provide a valid answer.")
 
         else:
             print(f"You cannot do that...")

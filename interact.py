@@ -91,6 +91,9 @@ def man():
     print("Awesome, follow me.")
     main.quest()
 
+def canyon():
+    print("You search the canyon")
+
 def innkeeper_shop():
     with open("stats.json", "r") as f:
         stats = json.load(f)
@@ -146,14 +149,16 @@ def innkeeper_shop():
 item_locations = {
     "innkeeper": innkeeper,
     "man": man,
-    "man without innkeeper": man,
+    "canyon": canyon
 }
 
+# item name - price
 innkeeper_items = {
     "Ale": 5,
     "Grilled pork": 10,
 }
 
+# item name - amount of HP healed (for food)
 item_characteristics = {
     "Ale": random.randint(1, 4),
     "Grilled pork": random.randint(1, 8),
