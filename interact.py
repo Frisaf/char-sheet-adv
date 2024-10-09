@@ -160,7 +160,7 @@ def lever():
     with open("inventory.json", "r") as f:
         inventory = json.load(f)
     
-    if stats["lever broken"] == True:
+    if stats["lever_broken"] == True:
         print("The broken lever is unusable.")
         return
 
@@ -177,14 +177,18 @@ def lever():
             if strength_roll >= 5:
                 print(f"{YELLOW}You pull with all your power and hear a sudden click from the lever, but nothing happens. Instead, you have the broken lever in your hands.")
 
-                inventory["broken lever"]
+                inventory["broken_lever"] = ""
 
                 with open("inventory.json", "w") as f:
                     json.dump(inventory, f, indent = 4)
                 
                 print(f"{RED}SYSTEM:{GREEN} Added {ITALIC}broken lever{RESET}{GREEN} to inventory.{RESET}")
 
-                stats["lever broken"] = True
+                stats["lever_broken"] = True
+
+                with open("stats.json", "w") as f:
+                    json.dump(stats, f, indent = 4)
+
                 break
             
             else:
