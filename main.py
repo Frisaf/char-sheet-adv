@@ -1,5 +1,10 @@
 import random, time, json, attack, interact
 
+with open("stats.json", "r") as f:
+    stats = json.load(f)
+
+stats["lever broken"] = False
+
 with open("npc_stats.json", "r") as f:
     npc_stats = json.load(f)
 
@@ -54,7 +59,10 @@ locations = {
     "man": Location("the man", f"{YELLOW}The man looks at you.{RESET}", {"backwards": "the inn",}),
     # QUEST
     "outside": Location("Berthold", f"{YELLOW}You follow Berthold outside. He explains that the evil wizard Magico plans to make the entire world's population to his slaves, and with that take over the world.\n{PURPLE}'I need a brave adventurer like you to stop Magico's evil plans'{YELLOW}, Berthold says,{PURPLE} 'you can kill him, or if you are able to take him here and let him serve his lifetime in jail. The choice is entirely up to you. Now, you might wonder where Magico lives, and the truth is that no one knows exactly where. There was a traveller who disappeared on a trip to the Great Canyon, which is to the west. I suggest you go there.'\n\n{RED}SAVEPOINT:{GREEN} You cannot go back to the inn{RESET}", {"left": "canyon"}),
-    "canyon": Location("the west, to the canyon", f"{YELLOW}You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the {CYAN}canyon{YELLOW}, searching for any signs of a hidden base somewhere.{RESET}", {})
+    "canyon": Location("the west, to the canyon", f"{YELLOW}You arrive to the Great Canyon, the place where Berthold said Magico probably lived. You walk along the edge of the {CYAN}canyon{YELLOW}, searching for any signs of a hidden base somewhere.{RESET}", {}),
+    "magico lair entrance": Location("the hole and jump down.", f"{YELLOW}The hole is tight, but you manage to squeeze through without any major injuries. It feels like you are crawling for forever, but suddenly you can see a little bit of light coming from a half opened hatch at the end of the tunnel.{RESET}", {"forwards:" "the door room"}),
+    "the door room": Location("the hatch and then through it.", f"{YELLOW}You enter a room with stone walls, stone floor and a ceiling, from where you came through the hatch, which seems to be made out of the same stone type as the canyon. There are two doors in the room, one to your right and one to your left, but something much bigger catches your eye: a big hole in the wall right in front of you.{RESET}", {"right": "right door room", "left": "left door room", "forwards": "hole in wall"}),
+    "right door room": Location("to the right", f"{YELLOW}The room has the same type of walls, ceiling and floor has the last room had, but is much smaller. It is empty, save for a {CYAN}lever{YELLOW} on one of the walls.", {"backwards": "the door room"})
 }
 
 class Player:
@@ -74,7 +82,9 @@ class Player:
         item_locations = {
             "innkeeper": "innkeeper",
             "man": "man",
-            "canyon": "canyon"
+            "canyon": "canyon",
+            "hole": "canyon",
+            "lever": "right door room"
         }
 
         if item_name in item_locations:
@@ -156,7 +166,7 @@ def startup():
     with open("stats.json", "r") as f:
         stats = json.load(f)
     
-    print(f"{RED}SYSTEM: {GREEN}Welcome to Escape 2: The Rescue, adventurer! Here are some useful tips that will help you progress the story.\n\nThere are six different commands, four for movement and two for interacting with your environment:\n- {YELLOW}move{GREEN} forwards/left/right/backwards.\n- {YELLOW}interact {GREEN}[item]\n- {YELLOW}attack{GREEN} [NPC]\nThere are aliases for these as well: {YELLOW}forward{GREEN} = f, north, n, forward {RED}| {YELLOW}left{GREEN} = l, west, w {RED}| {YELLOW}right{GREEN} = r, east, e {RED}| {YELLOW}backwards{GREEN} = b, south, s, backward {RED}| {YELLOW}interact {GREEN}= i {RED}| {YELLOW}attack {GREEN}= a\n\nItems that you can interact with are written in {CYAN}cyan{GREEN}. You can attempt to attack all NPC:s, but the gods will not always allow it...\n\nWith that out of the way, let's play the game!{RESET}")
+    print(f"{RED}SYSTEM: {GREEN}Welcome to Escape 2: The Rescue, adventurer! Here are some useful tips that will help you progress the story.\n\nThere are seven different commands, four for movement, two for interacting with your environment and one to view your inventory:{RED}\n- {YELLOW}move{GREEN} forwards/left/right/backwards {RED}(move in the chosen direction)\n- {YELLOW}interact {GREEN}[item]{RED} (interact with something in the room)\n- {YELLOW}attack{GREEN} [NPC]{RED} (attack an npc) \n- {YELLOW}bag {RED}(view inventory)\nThere are aliases for these as well: {YELLOW}forward{GREEN} = f, north, n, forward {RED}| {YELLOW}left{GREEN} = l, west, w {RED}| {YELLOW}right{GREEN} = r, east, e {RED}| {YELLOW}backwards{GREEN} = b, south, s, backward {RED}| {YELLOW}interact {GREEN}= i {RED}| {YELLOW}attack {GREEN}= a\n\nItems that you can interact with are written in {CYAN}cyan{GREEN}. You can attempt to attack all NPC:s, but the gods will not always allow it...\n\nWith that out of the way, let's play the game!{RESET}")
     input("Press ENTER to continue")
 
     while True:
@@ -377,6 +387,10 @@ def the_inn():
             
             with open("stats.json", "r") as f:
                 stats = json.load(f)
+            
+            if inventory == {}:
+                print(f"{GREEN}Your inventory is empty{RESET}")
+                break
 
             print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
         
@@ -454,6 +468,142 @@ def quest():
             
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
+        
+        elif command.startswith("bag"):
+            with open("inventory.json", "r") as f:
+                inventory = json.load(f)
+            
+            with open("stats.json", "r") as f:
+                stats = json.load(f)
+            
+            if inventory == {}:
+                print(f"{GREEN}Your inventory is empty{RESET}")
+                break
+
+            print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
+        
+            for index, item in enumerate(inventory):
+                print(f"[{index + 1}] {item}")
+
+            print("Type 'q' to exit inventory")
+
+            inventory_list = list(inventory.keys())
+
+            while True:
+                answer = input("> ").lower()
+
+                if answer == "q":
+                    break
+
+                elif 1 <= int(answer) <= len(inventory_list):
+                    used_item = inventory_list[int(answer) - 1]
+                    healing_value = inventory[used_item][0]
+
+                    stats["health_points"] += healing_value
+
+                    print(f"You used {used_item} and regained {healing_value} health points")
+
+                    del inventory[used_item]
+                    inventory_list.remove(used_item)
+
+                    with open("stats.json", "w") as f:
+                        json.dump(stats, f, indent = 4)
+                    
+                    with open("inventory.json", "w") as f:
+                        json.dump(inventory, f, indent = 4)
+                    
+                    break
+
+                else:
+                    print("Please provide a valid answer.")
+
+        else:
+            print(f"You cannot do that...")
+
+def magico_lair():
+    player = Player(locations["magico lair entrance"])
+    print("You are currently standing in the canyon, gazing down in what seems like an endless tunnel.")
+
+    while True:
+        print(player.current_location.description)
+        command = input(f"What do you want to do? ").lower()
+
+        if command.startswith("move") or command.startswith("m"):
+            try:
+                direction = command.split()[1]
+                direction = alt_directions(direction)
+                player.move(direction)
+
+            except IndexError:
+                print(f"That is not a valid command. Did you perhaps have a typo?")
+
+        elif command.startswith("interact") or command.startswith("i"):
+            try:
+                item = command.split()[1]
+                player.interact(item)
+            except IndexError:
+                print(f"That is not a valid command. Did you perhaps have a typo?")
+        
+        elif command.startswith("attack") or command.startswith("a"):
+            try:
+                npc = command.split()[1]
+
+                if npc == "":
+                    print("You need to specify what you want to attack.")
+                
+                else:
+                    player.attack(npc)
+            
+            except IndexError:
+                print(f"That is not a valid command. Did you perhaps have a typo?")
+        
+        elif command.startswith("bag"):
+            with open("inventory.json", "r") as f:
+                inventory = json.load(f)
+            
+            with open("stats.json", "r") as f:
+                stats = json.load(f)
+            
+            if inventory == {}:
+                print(f"{GREEN}Your inventory is empty{RESET}")
+                break
+
+            print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
+        
+            for index, item in enumerate(inventory):
+                print(f"[{index + 1}] {item}")
+
+            print("Type 'q' to exit inventory")
+
+            inventory_list = list(inventory.keys())
+
+            while True:
+                answer = input("> ").lower()
+
+                if answer == "q":
+                    break
+
+                elif 1 <= int(answer) <= len(inventory_list):
+                    used_item = inventory_list[int(answer) - 1]
+                    healing_value = inventory[used_item][0]
+
+                    stats["health_points"] += healing_value
+
+                    print(f"You used {used_item} and regained {healing_value} health points")
+
+                    del inventory[used_item]
+                    inventory_list.remove(used_item)
+
+                    with open("stats.json", "w") as f:
+                        json.dump(stats, f, indent = 4)
+                    
+                    with open("inventory.json", "w") as f:
+                        json.dump(inventory, f, indent = 4)
+                    
+                    break
+
+                else:
+                    print("Please provide a valid answer.")
 
         else:
             print(f"You cannot do that...")

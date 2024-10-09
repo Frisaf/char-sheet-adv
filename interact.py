@@ -92,7 +92,104 @@ def man():
     main.quest()
 
 def canyon():
-    print("You search the canyon")
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
+    print("Rolling a perception check. You need a 12 to succeed.")
+    input("Press ENTER to continue")
+
+    perception_roll = random.randint(1, 20) + stats["wis_mod"]
+
+    if perception_roll >= 12:
+        print(f"{GREEN}You rolled {perception_roll} and succeed.\n{YELLOW}You look around the canyon in search for something out of the ordinary. You see a small {CYAN}hole{YELLOW} behind a few rocks.")
+    
+    else:
+        print(f"{GREEN}You rolled a {perception_roll} and don't succeed.\n{YELLOW}You look around the canyon in search for something out of the ordinary, but you can't find anything particularly interesting.")
+
+def canyon_hole():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
+    print(f"{YELLOW}The hole is tight and so deep that you cannot see to the bottom of it.")
+
+    hole_options = [
+        "Squeeze through and hope for the best",
+        "Investigate the hole and try to look for where it might lead",
+        f"{ITALIC}Leave{RESET}"
+    ]
+
+    while True:
+        for index, item in enumerate(hole_options):
+            print(f"{RED}[{index + 1}]{RESET} {item}")
+
+        answer = int(input("> "))
+
+        try:
+            if 1 <= answer <= len(hole_options):
+                choice = hole_options[answer - 1]
+
+                if choice == "Squeeze through and hope for the best":
+                    main.magico_lair()
+                    break
+
+                elif choice == "Investigate the hole and try to look for where it might lead":
+                    print("Rolling an investigation check. You need a 10 to succeed.")
+
+                    investigation_roll = random.randint(1, 20) + stats["intelligence_mod"]
+
+                    print(f"{GREEN}You rolled {investigation_roll}{RESET}")
+
+                    if investigation_roll >= 10:
+                        print("You squint your eyes and focus on the darkness. You understand that the tight hole leads several meters down in the ground. Then it turns, so you don't see what's at the end of it.")
+                    
+                    else:
+                        print("You squint your eyes and focus on the darkness, but you don't manage to see anything beyond a few meters. The only thing you know is that the hole is tight, and that you might have a hard time to fit through it.")
+                    
+                    hole_options.pop(1)
+                
+                elif choice == f"{ITALIC}Leave{RESET}":
+                    break
+        
+        except ValueError:
+            print("Please provide a valid answer.")
+
+def lever():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+    
+    with open("inventory.json", "r") as f:
+        inventory = json.load(f)
+    
+    if stats["lever broken"] == True:
+        print("The broken lever is unusable.")
+        return
+
+    print(f"{YELLOW}You try to pull the lever, but it won't budge.\n{RED}[1]{RESET} [STRENGTH] Lay all your bodyweight onto the lever to try to push it downwards.\n{RED}[2]{RESET}{ITALIC}Leave{RESET}")
+
+    while True:
+        answer = int(input("> "))
+
+        if answer == 1:
+            print("Rolling strength. You need a 5 to succeed.")
+
+            strength_roll = random.randint(1, 20) + stats["strength_mod"]
+
+            if strength_roll >= 5:
+                print(f"{YELLOW}You pull with all your power and hear a sudden click from the lever, but nothing happens. Instead, you have the broken lever in your hands.")
+
+                inventory["broken lever"]
+
+                with open("inventory.json", "w") as f:
+                    json.dump(inventory, f, indent = 4)
+                
+                print(f"{RED}SYSTEM:{GREEN} Added {ITALIC}broken lever{RESET}{GREEN} to inventory.{RESET}")
+
+                stats["lever broken"] = True
+                break
+            
+            else:
+                print("You try to pull the lever again with all your strength, but it still won't budge.")
+                break
 
 def innkeeper_shop():
     with open("stats.json", "r") as f:
@@ -149,7 +246,9 @@ def innkeeper_shop():
 item_locations = {
     "innkeeper": innkeeper,
     "man": man,
-    "canyon": canyon
+    "canyon": canyon,
+    "hole": canyon_hole,
+    "lever": lever,
 }
 
 # item name - price
