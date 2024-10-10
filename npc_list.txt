@@ -6,7 +6,13 @@ INNKEEPER:
     - HP: 10
     - Weapons: Unarmed
     - Armour Class: 10
-    - Damage: 1d4
+    - Damage: 1d6
 
 MAN IN THE CORNER OF THE INN:
     Non-attackable
+
+PERSON IN MAGICO'S LAIR (random servant):
+    - HP: 15
+    - Weapons: Rusty dagger
+    - Armour class: 7
+    - Damage: 1d4

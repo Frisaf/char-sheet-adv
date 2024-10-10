@@ -1,11 +1,23 @@
 import random, json
-from main import startup, the_inn
+from main import startup, the_inn, magico_lair, final_battle
 
 with open("stats.json", "r") as f:
     stats = json.load(f)
 
 with open("npc_stats.json", "r") as f:
     npc_stats = json.load(f)
+
+YELLOW = "\033[33m"
+RED = "\033[31m"
+GREEN = "\033[32m"
+RESET = "\033[0m"
+CYAN = "\033[36m"
+BOLD = "\033[1m"
+ITALIC = "\033[3m"
+PURPLE = "\033[35m"
+INDENT = " "*20
+BLUE = "\033[34m"
+WHITEB = "\033[47m"
 
 weapon = stats["weapon"]
 strength = stats["strength"]
@@ -68,7 +80,7 @@ def innkeeper():
             with open("stats.json", "w") as f:
                 json.dump(stats, f, indent = 4)
 
-            print(f"The innkeeper lands a hit! and deals {npc_attack_roll} damage.")
+            print(f"The innkeeper lands a hit and deals {npc_attack_roll} damage!")
             print(f"You currently have {stats['health_points']} HP")
         
         else:
@@ -100,6 +112,74 @@ def innkeeper():
 
     the_inn()
 
+def person():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
+    with open("npc_stats.json", "r") as f:
+        npc_stats = json.load(f)
+
+    npc_hp = 15
+
+    while npc_hp > 0:
+        print(f"{RED}SYSTEM:{GREEN} Rolling with disadvantage due to the darkness.")
+
+        rolls = [random.randint(1, 20) for _ in range(2)]
+        hit_roll = min(rolls)
+
+        if hit_roll >= 7:
+            print(f"You rolled {', '.join(map(str, rolls))}. Taking {min(rolls)} as it is the lowest value. You land a hit on your enemy.")
+            npc_hp -= weapon_damage
+            print(f"You deal {weapon_damage} damage")
+            print("It is now your opponent's turn")
+            input(f"{RESET}Press ENTER to continue.{GREEN}")
+        
+        else:
+            print(f"You rolled a {hit_roll} and don't hit! It's your opponent's turn.")
+            input(f"{RESET}Press ENTER to continue.{GREEN}")
+        
+        npc_hit = random.randint(1, 20)
+
+        if npc_hit >= armour_class:
+            npc_attack_roll = random.randint(1, 4)
+            stats["health_points"] -= npc_attack_roll
+
+            with open("stats.json", "w") as f:
+                json.dump(stats, f, indent = 4)
+
+            print(f"The person lands a hit and deals {npc_attack_roll} damage.")
+            print(f"You currently have {stats['health_points']} HP")
+        
+        else:
+            print("The other person did not hit! It is now your turn.")
+        
+        if stats["health_points"] <= 0:
+            print("You died!")
+            
+            while True:
+                answer = input("Do you want to restart the entire game, or do you want to restart from the latest checkpoint? Type 'RES' to restart the entire game with a new character, or type 'CHECK' to restart from the latest checkpoint.\n> ").upper()
+                if answer == "RES":
+                    startup()
+                
+                elif answer == "CHECK":
+                    magico_lair()
+                
+                else:
+                    print("That is not a valid answer.")
+        
+        else:
+            continue
+    
+    print("You killed the person")
+
+    npc_stats["person alive"] = False
+
+    with open("npc_stats.json", "w") as f:
+        json.dump(npc_stats, f, indent = 4)
+
+    final_battle()
+
 npc_locations = {
     "innkeeper": innkeeper,
+    "person": person
 }

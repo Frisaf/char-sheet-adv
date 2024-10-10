@@ -89,6 +89,8 @@ def man():
             print("Please provide a valid answer")
     
     print("Awesome, follow me.")
+
+    stats["weapon"] = "shortsword"
     main.quest()
 
 def canyon():
@@ -195,23 +197,51 @@ def lever():
                 print("You try to pull the lever again with all your strength, but it still won't budge.")
                 break
 
-def innkeeper_shop():
+def traces():
     with open("stats.json", "r") as f:
         stats = json.load(f)
-    
-    with open("inventory.json", "r") as f:
-        inventory = json.load(f)
 
-    print(f"{GREEN}GOLD:{RESET} {stats['gold']}\n ")
+    if stats["investigated_traces"] == True:
+        print(f"{RED}SYSTEM:{GREEN} You can't investigate this item twice.")
     
-    for index, item in enumerate(innkeeper_items):
-        print(f"[{index + 1}] {item} {innkeeper_items[item]} GP")
-    
-    print("Type 'q' to exit buy mode.")
-    
+    else:
+        print("Rolling an investigation check. You need a 7 to succeed.")
+
+        investigation_roll = random.randint(1, 20) + stats["intelligence_mod"]
+
+        if investigation_roll >= 7 or investigation_roll == 20:
+            print(f"{RED}SYSTEM:{GREEN} You rolled a {investigation_roll} and succeed.\n{YELLOW}You notice that the traces are pretty fresh, as if someone has been there just recently.")
+        
+        else:
+            print(f"{RED}SYSTEM:{GREEN} You rolled a {investigation_roll} and don't succeed.\n{YELLOW}You don't notice anything particularly interesting with the traces.")
+        
+        stats["investigated_traces"] = True
+
+def letter():
+    print(f"{YELLOW}You pick up the letter and read:\n{BOLD}{ITALIC}{PURPLE}It's been days, no weeks, since I last slept. If you read this, you need to leave now. This place is driving me insane. I haven't figured out the way out yet, but I think it has something to do with the lever in the other room...{RESET}")
+
+def innkeeper_shop():
     innkeeper_items_list = list(innkeeper_items.keys())
     
     while True:
+        with open("stats.json", "r") as f:
+            stats = json.load(f)
+    
+        with open("inventory.json", "r") as f:
+            inventory = json.load(f)
+
+        print(f"{GREEN}GOLD:{RESET} {stats['gold']}\n ")
+
+        if not innkeeper_items:
+            print("Shop is empty")
+            break
+        
+        else:
+            for index, item in enumerate(innkeeper_items):
+                print(f"[{index + 1}] {item} {innkeeper_items[item]} GP")
+        
+        print("Type 'q' to exit buy mode.")
+
         answer = input("> ").lower()
 
         if answer == "q":
@@ -237,12 +267,9 @@ def innkeeper_shop():
                 
                 with open("inventory.json", "w") as f:
                     json.dump(inventory, f, indent = 4)
-                
-                break
             
             else:
                 print("You don't have enough gold to buy that.")
-                break
     
         else:
             print("Please enter a valid answer")
@@ -253,6 +280,8 @@ item_locations = {
     "canyon": canyon,
     "hole": canyon_hole,
     "lever": lever,
+    "traces": traces,
+    "letter": letter,
 }
 
 # item name - price
