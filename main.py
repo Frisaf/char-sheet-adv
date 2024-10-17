@@ -67,7 +67,8 @@ locations = {
     "left door room": Location("to the left", f"{YELLOW}This room has the same type of walls, ceiling and floor as the last room had, but it is much smaller. In the middle of the room, there is a table with several millimeters of dust on. You would think that no one has been here for years, would it not be for the {CYAN}traces{YELLOW} in the dust. On top of the table, there is a {CYAN}letter{YELLOW}.{RESET}", {"backwards": "the door room"}),
     "hole in wall": Location("through the hole in the wall", f"{YELLOW}You enter a dark corridor. It seems to, just like the hole you entered through, be endless and pitch black. You continue to walk through the darkness until you suddenly feel a hand on your shoulder. You freeze turn around and see a pale, lifeless face stare right back at you.\n{PURPLE}'You shouldn't be here',{YELLOW} the person says with a monotone voice.{PURPLE} 'The master will be angry.'\n{YELLOW}The person takes a step back and draws their weapon, a rusty dagger.\n\n{RED}SYSTEM:{GREEN} Type 'attack person' to prepare yourself for an attack! You cannot go back from here...{RESET}", {}),
     # FINAL BATTLE
-    "corridor": Location("to the corridor", "The corridor is pitch black and you can barely see a thing.", {"forwards": "blocked crossroad"})
+    "corridor": Location("to the corridor", "The corridor is pitch black and you can barely see a thing.", {"forwards": "blocked crossroad"}),
+    "blocked crossroad": Location("forwards", "You continue to walk through the darkness, and you soon realise that the corridor has been blocked off.", {})
 }
 
 class Player:
