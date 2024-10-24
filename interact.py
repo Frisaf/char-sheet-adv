@@ -1,4 +1,4 @@
-import json, random, main
+import json, random, main, attack
 
 YELLOW = "\033[33m"
 RED = "\033[31m"
@@ -220,6 +220,69 @@ def traces():
 def letter():
     print(f"{YELLOW}You pick up the letter and read:\n{BOLD}{ITALIC}{PURPLE}It's been days, no weeks, since I last slept. If you read this, you need to leave now. This place is driving me insane. I haven't figured out the way out yet, but I think it has something to do with the lever in the other room...{RESET}")
 
+def person():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
+    print(f"{YELLOW}The person doesn't have a lot on them other than the rusty dagger they wielded in the battle against you.{RESET}\n[1] {ITALIC}Take the dagger{RESET}\n[2] {ITALIC}Leave")
+
+    while True:
+        answer = int(input("> "))
+
+        if answer not in [1, 2]:
+            print("Please provide a valid answer.")
+        
+        else:
+            print(f"{YELLOW}You take the dagger. It feels light in your hand.\n{RED}SYSTEM:{GREEN} You already have a weapon! Do you want to replace your {stats['weapon']} with the {ITALIC}rusty dagger?{RESET}")
+
+            choice = input("Yes or no: ").lower()
+
+            if choice == "yes":
+                stats["weapon"] = "rusty dagger"
+                print(f"{RED}SYSTEM:{GREEN} Picked up and equipped {ITALIC}rusty dagger{RESET}{GREEN}. Dropped shortsword.")
+                break
+            
+            elif choice == "no":
+                print(f"{YELLOW}You drop the rusty dagger to the ground. It is to no use for you.")
+                break
+            
+            else:
+                print("Please provide a valid answer.")
+
+def magico():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+    
+    magico_options = [
+        "Cancel the spell immediately, Magico, and you will walk out of here alive.",
+        "What is this place...?",
+        "This ends now! Die!",
+    ]
+
+    while True:
+        for index, option in magico_options:
+            print(f"[{index + 1}] {option}")
+        
+        answer = int(input("> "))
+
+        if 1 <= answer <= len(magico_options):
+            choice = magico_options[answer - 1]
+
+            if choice == "Cancel the spell immediately, Magico, and you will walk out of here alive.":
+                print(f"{YELLOW}Magico scoffs.\n{PURPLE}'You think you can kill me?'{YELLOW} he says,{PURPLE}'I have been master over this place for three hundered years! I am immortal, unlike you.'\n{YELLOW}He spits on the stone floor.\n{PURPLE}'The only one walking out of here alive is me.'{RESET}")
+
+                attack.magico_battle()
+            
+            elif choice == "What is this place...?":
+                print(f"{YELLOW}The light from the orb illuminates Magico's malicious grin.\n{PURPLE}'This, my dear soon-to-be-slave, is my lair, my base, my home, my lab, whatever you'd like to call it. One might think, how can someone live in this place? I asked myself the same question when I came here, but I found it to be a very good place to hide while I was building my army of lost adventurers.'{RESET}")
+
+                magico_options.pop(1)
+            
+            elif choice == "This ends now! Die!":
+                print(f"{PURPLE}'You will regret this choice, young adventurer',{YELLOW} Magico hisses, {PURPLE}'Slave 752, attack!'")
+
+                attack.magico_battle()
+
 def innkeeper_shop():
     innkeeper_items_list = list(innkeeper_items.keys())
     
@@ -282,6 +345,7 @@ item_locations = {
     "lever": lever,
     "traces": traces,
     "letter": letter,
+    "magico": magico,
 }
 
 # item name - price

@@ -35,18 +35,9 @@ cha_mod = stats["cha_mod"]
 health_points = stats["health_points"]
 armour_class = stats["armour_class"]
 
-unarmed_strike = random.randint(1, 20) + strength_mod
-
 weapons = {
     "shortsword": random.randint(1, 6)
 }
-
-if weapon == "":
-    weapon = unarmed_strike
-    weapon_damage = 1 + strength_mod
-
-else:
-    weapon_damage = weapons[weapon]
 
 def innkeeper():
     with open("stats.json", "r") as f:
@@ -59,6 +50,12 @@ def innkeeper():
 
     while npc_hp > 0:
         hit_roll = random.randint(1, 20)
+        
+        if weapon == "":
+            weapon_damage = random.randint(1, 20) + strength_mod
+
+        else:
+            weapon_damage = weapons[weapon]
 
         if hit_roll >= 10:
             print(f"You rolled {hit_roll} and land a hit on the innkeeper.")
@@ -118,6 +115,12 @@ def person():
 
     with open("npc_stats.json", "r") as f:
         npc_stats = json.load(f)
+    
+    if weapon == "":
+        weapon_damage = random.randint(1, 20) + strength_mod
+
+    else:
+        weapon_damage = weapons[weapon]
 
     npc_hp = 15
 
@@ -178,6 +181,24 @@ def person():
         json.dump(npc_stats, f, indent = 4)
 
     final_battle()
+
+def magico_battle():
+    with open("stats.json", "r") as f:
+        stats = json.load(f)
+
+    with open("npc_stats.json", "r") as f:
+        npc_stats = json.load(f)
+    
+    if weapon == "":
+        weapon_damage = random.randint(1, 20) + strength_mod
+
+    else:
+        weapon_damage = weapons[weapon]
+
+    magico_hp = 30
+    slave_hp = 15
+
+    print(f"{RED}SYSTEM:{GREEN} Magico sends his slave to attack first! Watch your step!")
 
 npc_locations = {
     "innkeeper": innkeeper,

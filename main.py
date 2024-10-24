@@ -67,8 +67,8 @@ locations = {
     "left door room": Location("to the left", f"{YELLOW}This room has the same type of walls, ceiling and floor as the last room had, but it is much smaller. In the middle of the room, there is a table with several millimeters of dust on. You would think that no one has been here for years, would it not be for the {CYAN}traces{YELLOW} in the dust. On top of the table, there is a {CYAN}letter{YELLOW}.{RESET}", {"backwards": "the door room"}),
     "hole in wall": Location("through the hole in the wall", f"{YELLOW}You enter a dark corridor. It seems to, just like the hole you entered through, be endless and pitch black. You continue to walk through the darkness until you suddenly feel a hand on your shoulder. You freeze turn around and see a pale, lifeless face stare right back at you.\n{PURPLE}'You shouldn't be here',{YELLOW} the person says with a monotone voice.{PURPLE} 'The master will be angry.'\n{YELLOW}The person takes a step back and draws their weapon, a rusty dagger.\n\n{RED}SYSTEM:{GREEN} Type 'attack person' to prepare yourself for an attack! You cannot go back from here...{RESET}", {}),
     # FINAL BATTLE
-    "corridor": Location("to the corridor", "The corridor is pitch black and you can barely see a thing.", {"forwards": "blocked crossroad"}),
-    "blocked crossroad": Location("forwards", "You continue to walk through the darkness, and you soon realise that the corridor has been blocked off.", {})
+    "corridor": Location("to the corridor", f"{YELLOW}The corridor is pitch black and you can barely see a thing. The lifeless corpse of the {CYAN}person{YELLOW} you just killed lies in front of you.{RESET}", {"forwards": "blocked crossroad"}),
+    "blocked crossroad": Location("forwards", f"{YELLOW}You continue to walk through the darkness, and you soon realise that the corridor has been blocked off by a bunch of big rocks.\n{PURPLE}'More humans?'{YELLOW} you hear a voice say from behind you. It comes from a man wearing a purple robe with a cone shaped hat in the same colour. An orb floating next to the man is radiating a bright light on you both. You realise that this must be Magico.\n{PURPLE} 'Seems like your friend has come to take you from me',{YELLOW} he says\nAt first, you are confused. What is he talking about? Then you see a shadow approaching from behind the man. It is a person, looking rather normal to be in an ancient wizard's lair, but you don't spot any life in their eyes. There is no emotion behind those eyes, no life, only darkness and a will to follow their master: Magico. This must be the enslaved adventurer Berthold was talking about.\n\n{RED}SYSTEM:{GREEN} You cannot go back from here", {}),
 }
 
 class Player:
@@ -93,6 +93,7 @@ class Player:
             "lever": "right door room",
             "traces": "left door room",
             "letter": "left door room",
+            "magico": "blocked crossroad",
         }
 
         if item_name in item_locations:
@@ -129,9 +130,6 @@ class Player:
         
         else:
             print(f"The gods forbid you to attack {npc}: This is not a valid NPC to attack.")
-    
-    def inventory(self):
-        print("Here is your inventory\n") # Is this needed?
 
 first_names = [
     "Phraan",
@@ -175,7 +173,7 @@ def startup():
     with open("stats.json", "r") as f:
         stats = json.load(f)
     
-    print(f"{RED}SYSTEM: {GREEN}Welcome to Escape 2: The Rescue, adventurer! Here are some useful tips that will help you progress the story.\n\nThere are seven different commands, four for movement, two for interacting with your environment and one to view your inventory:{RED}\n- {YELLOW}move{GREEN} forwards/left/right/backwards {RED}(move in the chosen direction)\n- {YELLOW}interact {GREEN}[item]{RED} (interact with something in the room)\n- {YELLOW}attack{GREEN} [NPC]{RED} (attack an npc) \n- {YELLOW}bag {RED}(view inventory)\nThere are aliases for these as well: {YELLOW}forward{GREEN} = f, north, n, forward {RED}| {YELLOW}left{GREEN} = l, west, w {RED}| {YELLOW}right{GREEN} = r, east, e {RED}| {YELLOW}backwards{GREEN} = b, south, s, backward {RED}| {YELLOW}interact {GREEN}= i {RED}| {YELLOW}attack {GREEN}= a\n\nItems that you can interact with are written in {CYAN}cyan{GREEN}. You can attempt to attack all NPC:s, but the gods will not always allow it...\n\nWith that out of the way, let's play the game!{RESET}")
+    print(f"{RED}SYSTEM: {GREEN}Welcome to Escape 2: The Rescue, adventurer! Here are some useful tips that will help you progress the story.\n\nThere are seven different commands, four for movement, two for interacting with your environment and one to view your inventory:{RED}\n- {YELLOW}move{GREEN} forwards/left/right/backwards {RED}(move in the chosen direction)\n- {YELLOW}interact {GREEN}[item]{RED} (interact with something in the room)\n- {YELLOW}attack{GREEN} [NPC]{RED} (attack an npc) \n- {YELLOW}inv {RED}(view inventory)\nThere are aliases for these as well: {YELLOW}forward{GREEN} = f, north, n, forward {RED}| {YELLOW}left{GREEN} = l, west, w {RED}| {YELLOW}right{GREEN} = r, east, e {RED}| {YELLOW}backwards{GREEN} = b, south, s, backward {RED}| {YELLOW}interact {GREEN}= int {RED}| {YELLOW}attack {GREEN}= a\n\nItems that you can interact with are written in {CYAN}cyan{GREEN}. You can attempt to attack all NPC:s, but the gods will not always allow it...\n\nWith that out of the way, let's play the game!{RESET}")
     input("Press ENTER to continue")
 
     while True:
@@ -370,7 +368,7 @@ def the_inn():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
 
-        elif command.startswith("interact") or command.startswith("i"):
+        elif command.startswith("interact") or command.startswith("int"):
             try:
                 item = command.split()[1]
                 player.interact(item)
@@ -390,16 +388,12 @@ def the_inn():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
         
-        elif command.startswith("bag"):
+        elif command.startswith("inv"):
             with open("inventory.json", "r") as f:
                 inventory = json.load(f)
             
             with open("stats.json", "r") as f:
                 stats = json.load(f)
-            
-            if inventory == {}:
-                print(f"{GREEN}Your inventory is empty{RESET}")
-                break
 
             print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
         
@@ -443,6 +437,8 @@ def the_inn():
 
 def quest():
     player = Player(locations["outside"])
+    stats["weapon"] = "shortsword"
+
     print("You are currently outside the inn.")
 
     while True:
@@ -458,7 +454,7 @@ def quest():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
 
-        elif command.startswith("interact") or command.startswith("i"):
+        elif command.startswith("interact") or command.startswith("int"):
             try:
                 item = command.split()[1]
                 player.interact(item)
@@ -478,16 +474,12 @@ def quest():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
         
-        elif command.startswith("bag"):
+        elif command.startswith("inv"):
             with open("inventory.json", "r") as f:
                 inventory = json.load(f)
             
             with open("stats.json", "r") as f:
                 stats = json.load(f)
-            
-            if inventory == {}:
-                print(f"{GREEN}Your inventory is empty{RESET}")
-                break
 
             print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
         
@@ -546,7 +538,7 @@ def magico_lair():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
 
-        elif command.startswith("interact") or command.startswith("i"):
+        elif command.startswith("interact") or command.startswith("int"):
             try:
                 item = command.split()[1]
                 player.interact(item)
@@ -566,16 +558,12 @@ def magico_lair():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
         
-        elif command.startswith("bag"):
+        elif command.startswith("inv"):
             with open("inventory.json", "r") as f:
                 inventory = json.load(f)
             
             with open("stats.json", "r") as f:
                 stats = json.load(f)
-            
-            if inventory == {}:
-                print(f"{GREEN}Your inventory is empty{RESET}")
-                break
 
             print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
         
@@ -634,7 +622,7 @@ def final_battle():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
 
-        elif command.startswith("interact") or command.startswith("i"):
+        elif command.startswith("interact") or command.startswith("int"):
             try:
                 item = command.split()[1]
                 player.interact(item)
@@ -654,16 +642,12 @@ def final_battle():
             except IndexError:
                 print(f"That is not a valid command. Did you perhaps have a typo?")
         
-        elif command.startswith("bag"):
+        elif command.startswith("inv"):
             with open("inventory.json", "r") as f:
                 inventory = json.load(f)
             
             with open("stats.json", "r") as f:
                 stats = json.load(f)
-            
-            if inventory == {}:
-                print(f"{GREEN}Your inventory is empty{RESET}")
-                break
 
             print(f"{GREEN}Your inventory:\nGold:{RESET} {stats["gold"]}\n ")
         
