@@ -197,8 +197,49 @@ def magico_battle():
 
     magico_hp = 30
     slave_hp = 15
+    spell_broken = False
 
     print(f"{RED}SYSTEM:{GREEN} Magico sends his slave to attack first! Watch your step!")
+
+    slave_options = [
+        f"{ITALIC}Try to break the spell",
+        f"{ITALIC}Attack",
+    ]
+
+    while spell_broken == True:
+        for index, option in enumerate(slave_options):
+            print(f"[{index}] {option}")
+        
+        choice = int(input(f"{RESET}> "))
+
+        try:
+            if choice == f"{ITALIC}Try to break the spell":
+                print(f"{YELLOW}You throw a rock at Magico to try to break his concentration. Rolling a dexterity check.")
+
+                dexterity_check = random.randint(1, 20)
+                magico_con_save = random.randint(1, 20)
+
+                if dexterity_check + stats[dex_mod] > magico_con_save:
+                    print(f"{YELLOW}You throw a rock at Magico and he staggers back. The slave in front of you collapses to the floor, now unconscious.")
+                    spell_broken = False
+                
+                else:
+                    print(f"{YELLOW}You miss, and it is now the slave's turn to attack.")
+                    missed = True
+            
+            elif choice == f"{ITALIC}Attack":
+                break
+
+            else:
+                print("Please provide a valid answer.")
+        
+        except ValueError:
+            print("Please provide a valid answer.")
+
+    while slave_hp > 0:
+        if missed == True:
+            print("It is the slave's turn to attack!")
+                
 
 npc_locations = {
     "innkeeper": innkeeper,

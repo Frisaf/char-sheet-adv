@@ -91,6 +91,10 @@ def man():
     print("Awesome, follow me.")
 
     stats["weapon"] = "shortsword"
+
+    with open("stats.json", "w") as f:
+        json.dump(stats, f, indent = 4)
+
     main.quest()
 
 def canyon():
@@ -261,7 +265,7 @@ def magico():
 
     while True:
         for index, option in enumerate(magico_options):
-            print(f"[{index + 1}] {option}")
+            print(f"{RED}[{index + 1}]{RESET} {option}")
         
         answer = int(input("> "))
         
