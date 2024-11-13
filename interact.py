@@ -260,28 +260,32 @@ def magico():
     ]
 
     while True:
-        for index, option in magico_options:
+        for index, option in enumerate(magico_options):
             print(f"[{index + 1}] {option}")
         
         answer = int(input("> "))
+        
+        try:
+            if 1 <= answer <= len(magico_options):
+                choice = magico_options[answer - 1]
 
-        if 1 <= answer <= len(magico_options):
-            choice = magico_options[answer - 1]
+                if choice == "Cancel the spell immediately, Magico, and you will walk out of here alive.":
+                    print(f"{YELLOW}Magico scoffs.\n{PURPLE}'You think you can kill me?'{YELLOW} he says,{PURPLE}'I have been master over this place for three hundered years! I am immortal, unlike you.'\n{YELLOW}He spits on the stone floor.\n{PURPLE}'The only one walking out of here alive is me.'{RESET}")
 
-            if choice == "Cancel the spell immediately, Magico, and you will walk out of here alive.":
-                print(f"{YELLOW}Magico scoffs.\n{PURPLE}'You think you can kill me?'{YELLOW} he says,{PURPLE}'I have been master over this place for three hundered years! I am immortal, unlike you.'\n{YELLOW}He spits on the stone floor.\n{PURPLE}'The only one walking out of here alive is me.'{RESET}")
+                    attack.magico_battle()
+                
+                elif choice == "What is this place...?":
+                    print(f"{YELLOW}The light from the orb illuminates Magico's malicious grin.\n{PURPLE}'This, my dear soon-to-be-slave, is my lair, my base, my home, my lab, whatever you'd like to call it. One might think, how can someone live in this place? I asked myself the same question when I came here, but I found it to be a very good place to hide while I was building my army of lost adventurers.'{RESET}")
 
-                attack.magico_battle()
-            
-            elif choice == "What is this place...?":
-                print(f"{YELLOW}The light from the orb illuminates Magico's malicious grin.\n{PURPLE}'This, my dear soon-to-be-slave, is my lair, my base, my home, my lab, whatever you'd like to call it. One might think, how can someone live in this place? I asked myself the same question when I came here, but I found it to be a very good place to hide while I was building my army of lost adventurers.'{RESET}")
+                    magico_options.pop(1)
+                
+                elif choice == "This ends now! Die!":
+                    print(f"{PURPLE}'You will regret this choice, young adventurer',{YELLOW} Magico hisses, {PURPLE}'Slave 752, attack!'")
 
-                magico_options.pop(1)
-            
-            elif choice == "This ends now! Die!":
-                print(f"{PURPLE}'You will regret this choice, young adventurer',{YELLOW} Magico hisses, {PURPLE}'Slave 752, attack!'")
-
-                attack.magico_battle()
+                    attack.magico_battle()
+        
+        except ValueError:
+            print("Please provide a valid answer")
 
 def innkeeper_shop():
     innkeeper_items_list = list(innkeeper_items.keys())

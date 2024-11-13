@@ -437,7 +437,6 @@ def the_inn():
 
 def quest():
     player = Player(locations["outside"])
-    stats["weapon"] = "shortsword"
 
     print("You are currently outside the inn.")
 
