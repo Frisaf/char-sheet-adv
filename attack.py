@@ -198,6 +198,7 @@ def magico_battle():
     magico_hp = 30
     slave_hp = 15
     spell_broken = False
+    missed = False
 
     print(f"{RED}SYSTEM:{GREEN} Magico sends his slave to attack first! Watch your step!")
 
@@ -206,40 +207,74 @@ def magico_battle():
         f"{ITALIC}Attack",
     ]
 
-    while spell_broken == True:
+    while spell_broken == False:
         for index, option in enumerate(slave_options):
-            print(f"[{index}] {option}")
+            print(f"[{index + 1}] {option}")
         
-        choice = int(input(f"{RESET}> "))
+        answer = int(input(f"{RESET}> "))
 
         try:
-            if choice == f"{ITALIC}Try to break the spell":
-                print(f"{YELLOW}You throw a rock at Magico to try to break his concentration. Rolling a dexterity check.")
+            if 1 <= answer <= len(slave_options):
+                choice = slave_options[answer - 1]
 
-                dexterity_check = random.randint(1, 20)
-                magico_con_save = random.randint(1, 20)
+                if choice == f"{ITALIC}Try to break the spell":
+                    print(f"{YELLOW}You throw a rock at Magico to try to break his concentration. Rolling a dexterity check.")
 
-                if dexterity_check + stats[dex_mod] > magico_con_save:
-                    print(f"{YELLOW}You throw a rock at Magico and he staggers back. The slave in front of you collapses to the floor, now unconscious.")
-                    spell_broken = False
-                
-                else:
-                    print(f"{YELLOW}You miss, and it is now the slave's turn to attack.")
-                    missed = True
+                    dexterity_check = random.randint(1, 20)
+                    magico_con_save = random.randint(1, 20)
+
+                    if dexterity_check + stats[dex_mod] > magico_con_save:
+                        print(f"{YELLOW}You throw a rock at Magico and he staggers back. The slave in front of you collapses to the floor, now unconscious.")
+                        spell_broken = False
+                    
+                    else:
+                        print(f"{YELLOW}You miss, and it is now the slave's turn to attack.")
+                        missed = True
+                        spell_broken == True
             
-            elif choice == f"{ITALIC}Attack":
-                break
+                elif choice == f"{ITALIC}Attack":
+                    spell_broken == True
 
+                else:
+                    print("Please provide a valid answer.")
+            
             else:
                 print("Please provide a valid answer.")
         
         except ValueError:
             print("Please provide a valid answer.")
 
+    if missed == True:
+        print("It is the slave's turn to attack!")
+
+        slave_attack_roll = random.randint(1, 20)
+
+        if slave_attack_roll >= stats["armour_class"]:
+            slave_damage_roll = random.randint(1, 10)
+            stats["health_points"] -= slave_damage_roll
+            print(f"The slave hit you and dealt {slave_damage_roll} damage. You currently have {stats['health_points']} HP.")
+    
     while slave_hp > 0:
-        if missed == True:
-            print("It is the slave's turn to attack!")
-                
+        print("It is your turn to attack!")
+
+        attack_roll = random.randint(1, 20)
+
+        if attack_roll >= 13:
+            damage_roll = weapon_damage # HAS TO BE CHANGED LATER FOR IT TO BE RANDOM
+            slave_hp -= damage_roll
+
+            print(f"You hit and deal {damage_roll} damage to the slave.")
+            print("It is now the slave's turn to attack.")
+
+        else:
+            print("You missed! This means that it is the slave's turn to attack.")
+
+        slave_attack_roll = random.randint(1, 20)
+
+        if slave_attack_roll >= stats["armour_class"]:
+            slave_damage_roll = random.randint(1, 10)
+            stats["health_points"] -= slave_damage_roll
+            print(f"The slave hit you and dealt {slave_damage_roll} damage. You currently have {stats['health_points']} HP.")
 
 npc_locations = {
     "innkeeper": innkeeper,
