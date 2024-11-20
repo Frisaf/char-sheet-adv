@@ -3,13 +3,15 @@ import random, time, json, attack, interact
 with open("stats.json", "r") as f:
     stats = json.load(f)
 
-stats["lever broken"] = False
+stats["lever_broken"] = False
 stats["investigated_traces"] = False
+stats["weapon"] = ""
 
 with open("npc_stats.json", "r") as f:
     npc_stats = json.load(f)
 
 npc_stats["innkeeper alive"] = True
+npc_stats["person alive"] = True
 
 with open("npc_stats.json", "w") as f:
     json.dump(npc_stats, f, indent = 4)

@@ -36,7 +36,7 @@ health_points = stats["health_points"]
 armour_class = stats["armour_class"]
 
 weapons = {
-    "shortsword": random.randint(1, 6)
+    "shortsword": 6
 }
 
 def innkeeper():
@@ -55,7 +55,7 @@ def innkeeper():
             weapon_damage = random.randint(1, 20) + strength_mod
 
         else:
-            weapon_damage = weapons[weapon]
+            weapon_damage = random.randint(1, weapons[weapon])
 
         if hit_roll >= 10:
             print(f"You rolled {hit_roll} and land a hit on the innkeeper.")
@@ -120,7 +120,7 @@ def person():
         weapon_damage = random.randint(1, 20) + strength_mod
 
     else:
-        weapon_damage = weapons[weapon]
+        weapon_damage = random.randint(1, weapons[weapon])
 
     npc_hp = 15
 
@@ -138,7 +138,7 @@ def person():
             input(f"{RESET}Press ENTER to continue.{GREEN}")
         
         else:
-            print(f"You rolled a {hit_roll} and don't hit! It's your opponent's turn.")
+            print(f"You rolled {', '.join(map(str, rolls))}. Taking {min(rolls)} as it is the lowest value. You don't hit! It's your opponent's turn.")
             input(f"{RESET}Press ENTER to continue.{GREEN}")
         
         npc_hit = random.randint(1, 20)
@@ -157,7 +157,7 @@ def person():
             print("The other person did not hit! It is now your turn.")
         
         if stats["health_points"] <= 0:
-            print("You died!")
+            print(f"{RED}YOU DIED!{RESET}")
             
             while True:
                 answer = input("Do you want to restart the entire game, or do you want to restart from the latest checkpoint? Type 'RES' to restart the entire game with a new character, or type 'CHECK' to restart from the latest checkpoint.\n> ").upper()
@@ -193,7 +193,7 @@ def magico_battle():
         weapon_damage = random.randint(1, 20) + strength_mod
 
     else:
-        weapon_damage = weapons[weapon]
+        weapon_damage = random.randint(1, weapons[weapon])
 
     magico_hp = 30
     slave_hp = 15
