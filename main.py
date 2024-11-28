@@ -329,6 +329,7 @@ def set_scores():
     global health_points
     global armour_class
     stats["health_points"] = random.randint(10, 20) + stats["con_mod"]
+    stats["max_health"] = stats["health_points"]
     health_points = stats["health_points"]
     stats["armour_class"] = dex_mod + 10
     armour_class = stats["armour_class"]

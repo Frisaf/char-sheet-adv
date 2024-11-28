@@ -165,6 +165,7 @@ def person():
                     startup()
                 
                 elif answer == "CHECK":
+                    stats["health_points"] = stats["max_health"]
                     magico_lair()
                 
                 else:
@@ -223,7 +224,7 @@ def magico_battle():
                     dexterity_check = random.randint(1, 20)
                     magico_con_save = random.randint(1, 20)
 
-                    if dexterity_check + stats[dex_mod] > magico_con_save:
+                    if dexterity_check + stats["dex_mod"] > magico_con_save:
                         print(f"{YELLOW}You throw a rock at Magico and he staggers back. The slave in front of you collapses to the floor, now unconscious.")
                         spell_broken = False
                     
